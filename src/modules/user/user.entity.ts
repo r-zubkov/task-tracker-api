@@ -8,13 +8,22 @@ export enum UserType {
 @Entity()
 export class User {
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
+
+  @Column({length: 32, nullable: false})
+  email: string;
+
+  @Column({length: 20, nullable: false})
+  password: string;
+
+  @Column({name: 'password_hash', length: 20, nullable: true})
+  passwordHash: string;
 
   @Column('enum', {enum: [UserType.user, UserType.admin], default: UserType.user})
   type: UserType;
 
-  @Column({ default: true })
+  @Column({name: 'is_active', default: true })
   isActive: boolean;
 
   @Column({name: 'first_name', length: 30, nullable: false})
