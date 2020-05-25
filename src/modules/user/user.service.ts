@@ -17,21 +17,20 @@ export class UserService {
         id: id,
         isActive: true
       },
-      relations: ['projects'],
+      relations: ['projectOwner', 'projectParticipant'],
     });
   }
 
   async getAll(): Promise<User[]> {
     return await this.usersRepository.find({
-      where: {
-        isActive: true
-      },
-      relations: ['projects'],
+      where: {isActive: true}
     });
   }
 
   async create(user: User): Promise<InsertResult> {
     return await this.usersRepository.insert({
+      email: user.email,
+      password: user.password,
       firstName: user.firstName,
       lastName: user.lastName,
       birthDate: user.birthDate,
@@ -50,5 +49,13 @@ export class UserService {
 
   async delete(id: string): Promise<DeleteResult> {
     return await this.usersRepository.delete(id)
+  }
+
+  async findUsersByIds(ids: string[]): Promise<User[]> {
+    return await this.usersRepository.findByIds(ids, {relations: ['projectParticipant']});
+  }
+
+  async updateParticipantsState(participants: User[]): Promise<User[]> {
+    return await this.usersRepository.save(participants);
   }
 }

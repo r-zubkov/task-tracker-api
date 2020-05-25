@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project/project.entity';
 
 export enum UserType {
@@ -45,6 +45,10 @@ export class User {
   @Column({length: 500, nullable: true})
   description: string;
 
-  @OneToMany(() => Project, project => project.owner)
-  projects: Project[];
+  @OneToMany(() => Project, projectOwner => projectOwner.owner)
+  projectOwner: Project[];
+
+  @ManyToMany(() => Project, project => project.participants)
+  @JoinTable()
+  projectParticipant: Project[];
 }

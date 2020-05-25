@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ProjectService } from './project.service';
+import { IProjectParticipants, ProjectService } from './project.service';
 import { Project } from './project.entity';
 
 @Controller('project')
@@ -25,6 +25,11 @@ export class ProjectController {
   @Put()
   update(@Body() project: Project) {
     return this.projectService.update(project);
+  }
+
+  @Post('add-participants')
+  addParticipant(@Body() projectParticipants: IProjectParticipants) {
+    return this.projectService.addParticipant(projectParticipants);
   }
 
 }

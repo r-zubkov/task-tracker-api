@@ -2,6 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { Project } from './project.entity';
+import { User } from '../user/user.entity';
+import { UserService } from '../user/user.service';
+
+export interface IProjectParticipants {
+  userIds: string[],
+  projectId: string,
+}
 
 @Injectable()
 export class ProjectService {
@@ -9,6 +16,7 @@ export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private projectRepository: Repository<Project>,
+    private userService: UserService
   ) {}
 
   async get(id: string): Promise<Project> {
@@ -17,7 +25,7 @@ export class ProjectService {
         id: id,
         isActive: true
       },
-      relations: ['owner'],
+      relations: ['owner', 'participants'],
     });
   }
 
@@ -44,5 +52,16 @@ export class ProjectService {
       name: project.name,
       description: project.description,
     })
+  }
+
+  async addParticipant(projectParticipants: IProjectParticipants): Promise<User[]> {
+    const project = await this.projectRepository.findOne(projectParticipants.projectId);
+    const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
+
+    for (const participant of participants) {
+      participant.projectParticipant.push(project);
+    }
+
+    return this.userService.updateParticipantsState(participants);
   }
 }
