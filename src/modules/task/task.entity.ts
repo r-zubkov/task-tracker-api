@@ -9,6 +9,15 @@ export enum PriorityType {
   high = 'high'
 }
 
+export enum TaskStatusType {
+  new = 'new',
+  inWork = 'in_work',
+  delayed = 'delayed',
+  rejected = 'rejected',
+  completed = 'completed',
+  returned = 'returned'
+}
+
 @Entity()
 export class Task {
 
@@ -20,6 +29,16 @@ export class Task {
 
   @Column('enum', {enum: [PriorityType.low, PriorityType.regular, PriorityType.high]})
   priority: PriorityType;
+
+  @Column('enum', {enum: [
+    TaskStatusType.new,
+    TaskStatusType.inWork,
+    TaskStatusType.delayed,
+    TaskStatusType.rejected,
+    TaskStatusType.completed,
+    TaskStatusType.returned,
+  ], default: TaskStatusType.new})
+  status: TaskStatusType;
 
   @Column({name: 'estimated_time', nullable: false})
   estimatedTime: number;
