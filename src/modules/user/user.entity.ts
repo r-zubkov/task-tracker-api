@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Project } from '../project/project.entity';
 
 export enum UserType {
   user = 'user',
@@ -11,6 +12,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
+  @Column({name: 'is_active', default: true })
+  isActive: boolean;
+
   @Column({length: 32, nullable: false})
   email: string;
 
@@ -22,9 +26,6 @@ export class User {
 
   @Column('enum', {enum: [UserType.user, UserType.admin], default: UserType.user})
   type: UserType;
-
-  @Column({name: 'is_active', default: true })
-  isActive: boolean;
 
   @Column({name: 'first_name', length: 30, nullable: false})
   firstName: string;
@@ -43,4 +44,7 @@ export class User {
 
   @Column({length: 500, nullable: true})
   description: string;
+
+  @OneToMany(() => Project, project => project.owner)
+  projects: Project[];
 }

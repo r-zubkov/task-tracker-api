@@ -12,11 +12,22 @@ export class UserService {
   ) {}
 
   async get(id: string): Promise<User> {
-    return await this.usersRepository.findOne(id);
+    return await this.usersRepository.findOne({
+      where: {
+        id: id,
+        isActive: true
+      },
+      relations: ['projects'],
+    });
   }
 
   async getAll(): Promise<User[]> {
-    return await this.usersRepository.find();
+    return await this.usersRepository.find({
+      where: {
+        isActive: true
+      },
+      relations: ['projects'],
+    });
   }
 
   async create(user: User): Promise<InsertResult> {
