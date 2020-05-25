@@ -5,7 +5,7 @@ import { User } from '../user/user.entity';
 export class Project {
 
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({name: 'is_active', default: true })
   isActive: boolean;

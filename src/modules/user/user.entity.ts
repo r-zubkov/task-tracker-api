@@ -1,5 +1,8 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project/project.entity';
+import { Task } from '../task/task.entity';
+import { TaskComment } from '../task-comment/task-comment.entity';
+import { TaskTime } from '../task-time/task-time.entity';
 
 export enum UserType {
   user = 'user',
@@ -10,7 +13,7 @@ export enum UserType {
 export class User {
 
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({name: 'is_active', default: true })
   isActive: boolean;
@@ -51,4 +54,19 @@ export class User {
   @ManyToMany(() => Project, project => project.participants)
   @JoinTable()
   projectParticipant: Project[];
+
+  @OneToMany(() => Task, taskAuthor => taskAuthor.author)
+  taskAuthor: Task[];
+
+  @OneToMany(() => TaskTime, taskTime => taskTime.author)
+  taskAuthorTrackedTime: TaskTime[];
+
+  @OneToMany(() => Task, taskExecutor => taskExecutor.author)
+  taskExecutor: Task[];
+
+  @OneToMany(() => Task, taskChecker => taskChecker.author)
+  taskChecker: Task[];
+
+  @OneToMany(() => TaskComment, commentAuthor => commentAuthor.author)
+  commentAuthor: TaskComment[];
 }
