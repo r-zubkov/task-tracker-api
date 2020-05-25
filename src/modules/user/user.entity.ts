@@ -18,7 +18,7 @@ export class User {
   @Column({name: 'is_active', default: true })
   isActive: boolean;
 
-  @Column({length: 32, nullable: false})
+  @Column({length: 32, unique: true, nullable: false})
   email: string;
 
   @Column({length: 20, nullable: false})

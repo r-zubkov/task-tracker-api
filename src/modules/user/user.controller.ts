@@ -28,7 +28,12 @@ export class UserController {
   }
 
   @Delete(':id')
-  delete(@Param() params) {
-    return this.userService.delete(params.id);
+  block(@Param() params) {
+    return this.userService.block(params.id);
+  }
+
+  @Post('/unblock/:id')
+  unblock(@Param() params) {
+    return this.userService.unblock(params.id);
   }
 }

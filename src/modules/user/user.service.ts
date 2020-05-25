@@ -32,23 +32,37 @@ export class UserService {
       email: user.email,
       password: user.password,
       firstName: user.firstName,
+      middleName: user.middleName,
       lastName: user.lastName,
       birthDate: user.birthDate,
-      number: user.number
+      number: user.number,
+      description: user.description
     })
   }
 
   async update(user: User): Promise<UpdateResult> {
     return await this.usersRepository.update(user.id, {
       firstName: user.firstName,
+      middleName: user.middleName,
       lastName: user.lastName,
       birthDate: user.birthDate,
-      number: user.number
+      number: user.number,
+      description: user.description
     })
   }
 
-  async delete(id: string): Promise<DeleteResult> {
-    return await this.usersRepository.delete(id)
+  async block(id: string): Promise<User> {
+    const user = await this.usersRepository.findOne(id);
+    user.isActive = false;
+
+    return await this.usersRepository.save(user)
+  }
+
+  async unblock(id: string): Promise<User> {
+    const user = await this.usersRepository.findOne(id);
+    user.isActive = true;
+
+    return await this.usersRepository.save(user)
   }
 
   async findUsersByIds(ids: string[]): Promise<User[]> {
