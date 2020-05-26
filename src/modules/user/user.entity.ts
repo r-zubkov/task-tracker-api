@@ -69,4 +69,10 @@ export class User {
 
   @OneToMany(() => TaskComment, commentAuthor => commentAuthor.author)
   commentAuthor: TaskComment[];
+
+  @Column('datetime', {name: 'updated_at', nullable: true})
+  updatedAt: Date;
+
+  @Column('datetime', {name: 'created_at', nullable: false})
+  createdAt: Date;
 }

@@ -70,6 +70,9 @@ export class Task {
   @Column('datetime', {name: 'executed_at', nullable: true})
   executedAt: Date;
 
+  @Column('datetime', {name: 'updated_at', nullable: true})
+  updatedAt: Date;
+
   @Column('datetime', {name: 'created_at', nullable: false})
   createdAt: Date;
 }

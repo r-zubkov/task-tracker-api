@@ -21,4 +21,10 @@ export class Project {
 
   @ManyToMany(() => User, user => user.projectParticipant, {cascade: true})
   participants: User[];
+
+  @Column('datetime', {name: 'updated_at', nullable: true})
+  updatedAt: Date;
+
+  @Column('datetime', {name: 'created_at', nullable: false})
+  createdAt: Date;
 }
