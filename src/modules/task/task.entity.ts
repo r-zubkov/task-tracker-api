@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'ty
 import { User } from '../user/user.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
 import { TaskTime } from '../task-time/task-time.entity';
+import { Project } from '../project/project.entity';
 
 export enum PriorityType {
   low = 'low',
@@ -45,6 +46,9 @@ export class Task {
 
   @Column({length: 5000, nullable: true})
   description: string;
+
+  @ManyToOne(() => Project, project => project.tasks, {nullable: false})
+  project: Project;
 
   @ManyToOne(() => User, user => user.taskExecutor, {nullable: false})
   executor: User;
