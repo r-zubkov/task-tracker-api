@@ -11,7 +11,7 @@ export class TaskTime {
   @Column('datetime', {nullable: false})
   date: Date;
 
-  @Column({name: 'time_spent', nullable: false})
+  @Column({name: 'time_spent', length: 11, nullable: false})
   timeSpent: number;
 
   @Column({name: 'change_reason', length: 150, nullable: true})
