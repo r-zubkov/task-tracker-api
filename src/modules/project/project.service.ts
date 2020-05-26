@@ -4,11 +4,7 @@ import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
-
-export interface IProjectParticipants {
-  userIds: string[],
-  projectId: string,
-}
+import { ProjectParticipantsDto } from './project-participants.dto';
 
 @Injectable()
 export class ProjectService {
@@ -54,7 +50,21 @@ export class ProjectService {
     })
   }
 
-  async addParticipant(projectParticipants: IProjectParticipants): Promise<User[]> {
+  async archive(id: string): Promise<Project> {
+    const project = await this.projectRepository.findOne({where: {id: id, isActive: true}});
+    project.isActive = false;
+
+    return await this.projectRepository.save(project);
+  }
+
+  async unzip(id: string): Promise<Project> {
+    const project = await this.projectRepository.findOne({where: {id: id, isActive: false}});
+    project.isActive = true;
+
+    return await this.projectRepository.save(project);
+  }
+
+  async addParticipant(projectParticipants: ProjectParticipantsDto): Promise<User[]> {
     const project = await this.projectRepository.findOne(projectParticipants.projectId);
     const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
 

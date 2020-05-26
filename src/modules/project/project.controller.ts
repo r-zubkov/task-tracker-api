@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { IProjectParticipants, ProjectService } from './project.service';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ProjectService } from './project.service';
 import { Project } from './project.entity';
+import { ProjectParticipantsDto } from './project-participants.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -27,9 +28,18 @@ export class ProjectController {
     return this.projectService.update(project);
   }
 
-  @Post('add-participants')
-  addParticipant(@Body() projectParticipants: IProjectParticipants) {
-    return this.projectService.addParticipant(projectParticipants);
+  @Delete(':id')
+  archive(@Param() params) {
+    return this.projectService.archive(params.id);
   }
 
+  @Post('/unzip/:id')
+  unblock(@Param() params) {
+    return this.projectService.unzip(params.id);
+  }
+
+  @Post('add-participants')
+  addParticipant(@Body() projectParticipants: ProjectParticipantsDto) {
+    return this.projectService.addParticipant(projectParticipants);
+  }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { InsertResult, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -52,14 +52,14 @@ export class UserService {
   }
 
   async block(id: string): Promise<User> {
-    const user = await this.usersRepository.findOne(id);
+    const user = await this.usersRepository.findOne({where: {id: id, isActive: true}});
     user.isActive = false;
 
     return await this.usersRepository.save(user)
   }
 
   async unblock(id: string): Promise<User> {
-    const user = await this.usersRepository.findOne(id);
+    const user = await this.usersRepository.findOne({where: {id: id, isActive: false}});
     user.isActive = true;
 
     return await this.usersRepository.save(user)
