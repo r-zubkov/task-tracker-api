@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Task } from '../task/task.entity';
 
@@ -23,7 +23,7 @@ export class Project {
   @ManyToMany(() => User, user => user.projectParticipant, {cascade: true})
   participants: User[];
 
-  @ManyToOne(() => Task, task => task.project, {nullable: false})
+  @OneToMany(() => Task, task => task.project, {nullable: false})
   tasks: Task[];
 
   @Column('datetime', {name: 'updated_at', nullable: true})

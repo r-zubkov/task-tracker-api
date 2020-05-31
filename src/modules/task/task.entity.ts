@@ -65,10 +65,10 @@ export class Task {
   @OneToMany(() => TaskTime, taskTime => taskTime.task)
   taskTrackedTime: TaskTime[];
 
-  @Column('datetime', {name: 'date_End', nullable: true})
+  @Column('datetime', {name: 'date_start', nullable: true})
   DateStart: Date;
 
-  @Column('datetime', {name: 'date_End', nullable: true})
+  @Column('datetime', {name: 'date_end', nullable: true})
   DateEnd: Date;
 
   @Column('datetime', {name: 'executed_at', nullable: true})
