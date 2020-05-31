@@ -33,7 +33,7 @@ export class UserController {
     return this.userService.block(params.id);
   }
 
-  @Post('/unblock/:id')
+  @Post(':id/unblock')
   unblock(@Param() params) {
     return this.userService.unblock(params.id);
   }

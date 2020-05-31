@@ -1,4 +1,8 @@
+import { ArrayMaxSize, ArrayMinSize, IsArray } from 'class-validator';
+
 export class ProjectParticipantsDto {
-  projectId: string;
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(50)
   userIds: string[];
 }

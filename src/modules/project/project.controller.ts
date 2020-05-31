@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { Project } from './project.entity';
 import { ProjectParticipantsDto } from './project-participants.dto';
+import { CreateProjectDto } from './create-project.dto';
+import { UpdateProjectDto } from './update-project.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -19,13 +20,13 @@ export class ProjectController {
   }
 
   @Post()
-  create(@Body() project: Project) {
+  create(@Body(new ValidationPipe()) project: CreateProjectDto) {
     return this.projectService.create(project);
   }
 
-  @Put()
-  update(@Body() project: Project) {
-    return this.projectService.update(project);
+  @Put(':id')
+  update(@Body(new ValidationPipe()) project: UpdateProjectDto, @Param() params) {
+    return this.projectService.update(project, params.id);
   }
 
   @Delete(':id')
@@ -33,13 +34,16 @@ export class ProjectController {
     return this.projectService.suspend(params.id);
   }
 
-  @Post('/activate/:id')
+  @Post(':id/activate')
   unblock(@Param() params) {
     return this.projectService.activate(params.id);
   }
 
-  @Post('add-participants')
-  addParticipant(@Body() projectParticipants: ProjectParticipantsDto) {
-    return this.projectService.addParticipant(projectParticipants);
+  @Post(':id/add-participants')
+  addParticipant(
+    @Body(new ValidationPipe()) projectParticipants: ProjectParticipantsDto,
+    @Param() params
+  ) {
+    return this.projectService.addParticipant(projectParticipants, params.id);
   }
 }
