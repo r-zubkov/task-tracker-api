@@ -50,14 +50,14 @@ export class ProjectService {
     })
   }
 
-  async archive(id: string): Promise<Project> {
+  async suspend(id: string): Promise<Project> {
     const project = await this.projectRepository.findOne({where: {id: id, isActive: true}});
     project.isActive = false;
 
     return await this.projectRepository.save(project);
   }
 
-  async unzip(id: string): Promise<Project> {
+  async activate(id: string): Promise<Project> {
     const project = await this.projectRepository.findOne({where: {id: id, isActive: false}});
     project.isActive = true;
 

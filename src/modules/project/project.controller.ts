@@ -30,12 +30,12 @@ export class ProjectController {
 
   @Delete(':id')
   archive(@Param() params) {
-    return this.projectService.archive(params.id);
+    return this.projectService.suspend(params.id);
   }
 
-  @Post('/unzip/:id')
+  @Post('/activate/:id')
   unblock(@Param() params) {
-    return this.projectService.unzip(params.id);
+    return this.projectService.activate(params.id);
   }
 
   @Post('add-participants')
