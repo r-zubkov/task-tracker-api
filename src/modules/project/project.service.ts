@@ -33,6 +33,18 @@ export class ProjectService {
       });
   }
 
+  async getUserTasks(projectId: string, userId: string): Promise<Project[]> {
+    return await this.projectRepository
+      .createQueryBuilder('project')
+      .leftJoinAndSelect("project.tasks", "task")
+      .leftJoinAndSelect("task.executor", "executor")
+      .leftJoinAndSelect("task.checker", "checker")
+      .where("project.id = :id", { id: projectId })
+      .orWhere("executor.id = :executorId", { executorId: userId })
+      .orWhere("checker.id = :checkerId", { checkerId: userId })
+      .getMany();
+  }
+
   async create(project: CreateProjectDto): Promise<InsertResult> {
     return await this.projectRepository.insert({
       ...project,

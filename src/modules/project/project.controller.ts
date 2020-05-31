@@ -19,6 +19,11 @@ export class ProjectController {
     return this.projectService.getAll();
   }
 
+  @Get(':projectId/user-tasks/:userId')
+  getTasksByUser(@Param() params) {
+    return this.projectService.getUserTasks(params.projectId, params.userId);
+  }
+
   @Post()
   create(@Body(new ValidationPipe()) project: CreateProjectDto) {
     return this.projectService.create(project);
