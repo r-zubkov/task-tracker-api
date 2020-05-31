@@ -18,7 +18,9 @@ export class TaskService {
   async get(id: string): Promise<Task> {
     return await this.taskRepository.findOne({
       where: {id: id},
-      relations: ['project', 'executor', 'checker', 'author', 'taskComments', 'taskComments.author', 'taskTrackedTime'],
+      relations: ['project', 'executor', 'checker', 'author',
+        'taskComments', 'taskComments.author',
+        'taskTrackedTime', 'taskTrackedTime.author'],
     });
   }
 

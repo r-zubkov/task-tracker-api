@@ -36,8 +36,8 @@ export class TaskCommentService {
     })
   }
 
-  async update(taskComment: UpdateTaskCommentDto, taskId: string): Promise<UpdateResult> {
-    return await this.taskCommentRepository.update(taskId, {
+  async update(taskComment: UpdateTaskCommentDto, taskCommentId: string): Promise<UpdateResult> {
+    return await this.taskCommentRepository.update(taskCommentId, {
       ...taskComment,
       updatedAt: DateHelper.formatToDbDateTime(new Date())
     })
