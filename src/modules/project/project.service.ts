@@ -23,7 +23,7 @@ export class ProjectService {
       where: {
         id: id
       },
-      relations: ['owner', 'participants'],
+      relations: ['owner', 'participants', 'tasks'],
     });
   }
 

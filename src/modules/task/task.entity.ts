@@ -41,7 +41,7 @@ export class Task {
   ], default: TaskStatusType.new})
   status: TaskStatusType;
 
-  @Column({name: 'estimated_time', nullable: false})
+  @Column({name: 'estimated_time', unsigned: true, nullable: false})
   estimatedTime: number;
 
   @Column({length: 5000, nullable: true})
@@ -65,11 +65,11 @@ export class Task {
   @OneToMany(() => TaskTime, taskTime => taskTime.task)
   taskTrackedTime: TaskTime[];
 
-  @Column('datetime', {name: 'date_start', nullable: true})
-  DateStart: Date;
+  @Column('datetime', {name: 'time_start', nullable: true})
+  timeStart: Date;
 
-  @Column('datetime', {name: 'date_end', nullable: true})
-  DateEnd: Date;
+  @Column('datetime', {name: 'time_end', nullable: true})
+  timeEnd: Date;
 
   @Column('datetime', {name: 'executed_at', nullable: true})
   executedAt: Date;
