@@ -71,6 +71,9 @@ export class Task {
   @Column('datetime', {name: 'time_end', nullable: true})
   timeEnd: Date;
 
+  @Column('datetime', {name: 'started_at', nullable: true})
+  startedAt: Date;
+
   @Column('datetime', {name: 'executed_at', nullable: true})
   executedAt: Date;
 

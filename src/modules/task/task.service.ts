@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
-import { Task } from './task.entity';
+import { Task, TaskStatusType } from './task.entity';
 import { DateHelper } from '../../common/helpers/date.helper';
 import { CreateTaskDto } from './create-task.dto';
 import { UpdateTaskDto } from './update-task.dto';
+import { UpdateTaskStatusDto } from './update-task-status.dto';
+import { TaskFlowService } from './task-flow.service';
 
 @Injectable()
 export class TaskService {
@@ -12,6 +14,7 @@ export class TaskService {
   constructor(
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
+    private taskFlowService: TaskFlowService
   ) {}
 
   async get(id: string): Promise<Task> {
@@ -50,5 +53,21 @@ export class TaskService {
       ...task,
       updatedAt: DateHelper.formatToDbDateTime(new Date())
     })
+  }
+
+  async updateStatus(status: UpdateTaskStatusDto, taskId: string): Promise<UpdateResult | boolean> {
+    const task = await this.taskRepository.findOne(taskId);
+    const newStatus = status.newStatus;
+
+    if(task && this.taskFlowService.isAvailableNextStatus(task.status, newStatus)) {
+      return await this.taskRepository.update(taskId, {
+        status: newStatus,
+        startedAt: (newStatus === TaskStatusType.inWork) ? DateHelper.formatToDbDateTime(new Date()) : task.startedAt,
+        executedAt: (newStatus === TaskStatusType.completed) ? DateHelper.formatToDbDateTime(new Date()) : task.executedAt,
+        updatedAt: DateHelper.formatToDbDateTime(new Date())
+      })
+    }
+
+    return false;
   }
 }
