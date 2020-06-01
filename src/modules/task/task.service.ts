@@ -7,7 +7,6 @@ import { CreateTaskDto } from './create-task.dto';
 import { UpdateTaskDto } from './update-task.dto';
 
 @Injectable()
-
 export class TaskService {
 
   constructor(
@@ -27,6 +26,16 @@ export class TaskService {
   async getAll(): Promise<Task[]> {
     return await this.taskRepository.find(
       { relations: ['project', 'executor', 'checker', 'author'], });
+  }
+
+  async getUserTrackedTime(userId: string): Promise<Task[]> {
+    return await this.taskRepository
+      .createQueryBuilder('task')
+      .leftJoinAndSelect("task.taskTrackedTime", "taskTrackedTime")
+      .leftJoinAndSelect("task.project", "project")
+      .leftJoinAndSelect("taskTrackedTime.author", "author")
+      .where("author.id = :id", { id: userId })
+      .getMany();
   }
 
   async create(task: CreateTaskDto): Promise<InsertResult> {

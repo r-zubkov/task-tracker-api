@@ -2,11 +2,15 @@ import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from 
 import { UserService } from './user.service';
 import { CreateUserDto } from './create-user.dto';
 import { UpdateUserDto } from './update-user.dto';
+import { TaskService } from '../task/task.service';
 
 @Controller('user')
 export class UserController {
 
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly taskService: TaskService
+  ) {}
 
   @Get(':id')
   get(@Param() params) {
@@ -16,6 +20,11 @@ export class UserController {
   @Get()
   getAll() {
     return this.userService.getAll();
+  }
+
+  @Get(':id/tracked-time')
+  getTasksByUser(@Param() params) {
+    return this.taskService.getUserTrackedTime(params.id);
   }
 
   @Post()
