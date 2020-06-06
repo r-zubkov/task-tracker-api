@@ -18,10 +18,10 @@ export class ProjectService {
     private userService: UserService
   ) {}
 
-  async get(id: string): Promise<Project> {
+  async get(uuid: string): Promise<Project> {
     return await this.projectRepository.findOne({
       where: {
-        id: id
+        id: uuid
       },
       relations: ['owner', 'participants', 'tasks', 'tasks.executor', 'tasks.checker', 'tasks.author'],
     });
@@ -33,15 +33,15 @@ export class ProjectService {
       });
   }
 
-  async getUserTasks(projectId: string, userId: string): Promise<Project[]> {
+  async getUserTasks(projectUuid: string, userUuid: string): Promise<Project[]> {
     return await this.projectRepository
       .createQueryBuilder('project')
       .leftJoinAndSelect("project.tasks", "task")
       .leftJoinAndSelect("task.executor", "executor")
       .leftJoinAndSelect("task.checker", "checker")
-      .where("project.id = :id", { id: projectId })
-      .orWhere("executor.id = :executorId", { executorId: userId })
-      .orWhere("checker.id = :checkerId", { checkerId: userId })
+      .where("project.id = :id", { id: projectUuid })
+      .orWhere("executor.id = :executorId", { executorId: userUuid })
+      .orWhere("checker.id = :checkerId", { checkerId: userUuid })
       .getMany();
   }
 
@@ -52,17 +52,17 @@ export class ProjectService {
     })
   }
 
-  async update(project: UpdateProjectDto, projectId: string): Promise<UpdateResult> {
-    return await this.projectRepository.update(projectId, {
+  async update(project: UpdateProjectDto, projectUuid: string): Promise<UpdateResult> {
+    return await this.projectRepository.update(projectUuid, {
       ...project,
       updatedAt: DateHelper.formatToDbDateTime(new Date())
     })
   }
 
-  async suspend(id: string): Promise<Project> {
+  async suspend(uuid: string): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: {
-        id: id,
+        id: uuid,
         isActive: true
       }});
     project.isActive = false;
@@ -70,10 +70,10 @@ export class ProjectService {
     return await this.projectRepository.save(project);
   }
 
-  async activate(id: string): Promise<Project> {
+  async activate(uuid: string): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: {
-        id: id,
+        id: uuid,
         isActive: false
       }});
     project.isActive = true;
@@ -81,8 +81,8 @@ export class ProjectService {
     return await this.projectRepository.save(project);
   }
 
-  async addParticipant(projectParticipants: ProjectParticipantsDto, projectId: string): Promise<User[]> {
-    const project = await this.projectRepository.findOne(projectId);
+  async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<User[]> {
+    const project = await this.projectRepository.findOne(projectUuid);
     const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
 
     for (const participant of participants) {

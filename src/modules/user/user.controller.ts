@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './create-user.dto';
 import { UpdateUserDto } from './update-user.dto';
@@ -12,9 +12,9 @@ export class UserController {
     private readonly taskService: TaskService
   ) {}
 
-  @Get(':id')
-  get(@Param() params) {
-    return this.userService.get(params.id);
+  @Get(':uuid')
+  get(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.userService.get(uuid);
   }
 
   @Get()
@@ -22,9 +22,9 @@ export class UserController {
     return this.userService.getAll();
   }
 
-  @Get(':id/tracked-time')
-  getTasksByUser(@Param() params) {
-    return this.taskService.getUserTrackedTime(params.id);
+  @Get(':uuid/tracked-time')
+  getTasksByUser(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.taskService.getUserTrackedTime(uuid);
   }
 
   @Post()
@@ -32,18 +32,21 @@ export class UserController {
     return this.userService.create(user);
   }
 
-  @Put(':id')
-  update(@Body(new ValidationPipe()) user: UpdateUserDto, @Param() params) {
-    return this.userService.update(user, params.id);
+  @Put(':uuid')
+  update(
+    @Body(new ValidationPipe()) user: UpdateUserDto,
+    @Param('uuid', ParseUUIDPipe) uuid: string
+  ) {
+    return this.userService.update(user, uuid);
   }
 
-  @Delete(':id')
-  block(@Param() params) {
-    return this.userService.block(params.id);
+  @Delete(':uuid')
+  block(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.userService.block(uuid);
   }
 
-  @Post(':id/unblock')
-  unblock(@Param() params) {
-    return this.userService.unblock(params.id);
+  @Post(':uuid/unblock')
+  unblock(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.userService.unblock(uuid);
   }
 }

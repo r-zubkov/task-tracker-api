@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './create-task.dto';
 import { UpdateTaskDto } from './update-task.dto';
@@ -9,9 +9,9 @@ export class TaskController {
 
   constructor(private readonly taskService: TaskService) {}
 
-  @Get(':id')
-  get(@Param() params) {
-    return this.taskService.get(params.id);
+  @Get(':uuid')
+  get(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.taskService.get(uuid);
   }
 
   @Get()
@@ -24,14 +24,20 @@ export class TaskController {
     return this.taskService.create(task);
   }
 
-  @Put(':id')
-  update(@Body(new ValidationPipe()) task: UpdateTaskDto, @Param() params) {
-    return this.taskService.update(task, params.id);
+  @Put(':uuid')
+  update(
+    @Body(new ValidationPipe()) task: UpdateTaskDto,
+    @Param('uuid', ParseUUIDPipe) uuid: string
+  ) {
+    return this.taskService.update(task, uuid);
   }
 
-  @Post(':id/update-status')
-  updateStatus(@Body(new ValidationPipe()) status: UpdateTaskStatusDto, @Param() params) {
-    return this.taskService.updateStatus(status, params.id);
+  @Post(':uuid/update-status')
+  updateStatus(
+    @Body(new ValidationPipe()) status: UpdateTaskStatusDto,
+    @Param('uuid', ParseUUIDPipe) uuid: string
+  ) {
+    return this.taskService.updateStatus(status, uuid);
   }
 
 }

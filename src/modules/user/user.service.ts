@@ -14,10 +14,10 @@ export class UserService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async get(id: string): Promise<User> {
+  async get(uuid: string): Promise<User> {
     return await this.usersRepository.findOne({
       where: {
-        id: id
+        id: uuid
       },
       relations: ['projectOwner', 'projectParticipant'],
     });
@@ -34,17 +34,17 @@ export class UserService {
     })
   }
 
-  async update(user: UpdateUserDto, userId: string): Promise<UpdateResult> {
-    return await this.usersRepository.update(userId, {
+  async update(user: UpdateUserDto, userUuid: string): Promise<UpdateResult> {
+    return await this.usersRepository.update(userUuid, {
       ...user,
       updatedAt: DateHelper.formatToDbDateTime(new Date())
     })
   }
 
-  async block(id: string): Promise<User> {
+  async block(uuid: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: {
-        id: id,
+        id: uuid,
         isActive: true
       }
     });
@@ -53,10 +53,10 @@ export class UserService {
     return await this.usersRepository.save(user)
   }
 
-  async unblock(id: string): Promise<User> {
+  async unblock(uuid: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: {
-        id: id,
+        id: uuid,
         isActive: false
       }
     });
@@ -65,8 +65,8 @@ export class UserService {
     return await this.usersRepository.save(user)
   }
 
-  async findUsersByIds(ids: string[]): Promise<User[]> {
-    return await this.usersRepository.findByIds(ids, {
+  async findUsersByIds(uuids: string[]): Promise<User[]> {
+    return await this.usersRepository.findByIds(uuids, {
         relations: ['projectParticipant']
       });
   }

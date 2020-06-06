@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { TaskTimeService } from './task-time.service';
 import { CreateTaskTimeDto } from './create-task-time.dto';
 import { UpdateTaskTimeDto } from './update-task-time.dto';
@@ -8,9 +8,9 @@ export class TaskTimeController {
 
   constructor(private readonly taskTimeService: TaskTimeService) {}
 
-  @Get(':id')
-  get(@Param() params) {
-    return this.taskTimeService.get(params.id);
+  @Get(':uuid')
+  get(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.taskTimeService.get(uuid);
   }
 
   @Get()
@@ -23,8 +23,11 @@ export class TaskTimeController {
     return this.taskTimeService.create(taskTime);
   }
 
-  @Put(':id')
-  update(@Body(new ValidationPipe()) taskTime: UpdateTaskTimeDto, @Param() params) {
-    return this.taskTimeService.update(taskTime, params.id);
+  @Put(':uuid')
+  update(
+    @Body(new ValidationPipe()) taskTime: UpdateTaskTimeDto,
+    @Param('uuid', ParseUUIDPipe) uuid: string
+  ) {
+    return this.taskTimeService.update(taskTime, uuid);
   }
 }

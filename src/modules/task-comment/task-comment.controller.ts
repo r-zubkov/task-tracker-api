@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { TaskCommentService } from './task-comment.service';
 import { CreateTaskCommentDto } from './create-task-comment.dto';
 import { UpdateTaskCommentDto } from './update-task-comment.dto';
@@ -8,9 +8,9 @@ export class TaskCommentController {
 
   constructor(private readonly taskCommentService: TaskCommentService) {}
 
-  @Get(':id')
-  get(@Param() params) {
-    return this.taskCommentService.get(params.id);
+  @Get(':uuid')
+  get(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.taskCommentService.get(uuid);
   }
 
   @Get()
@@ -23,8 +23,11 @@ export class TaskCommentController {
     return this.taskCommentService.create(taskComment);
   }
 
-  @Put(':id')
-  update(@Body(new ValidationPipe()) taskComment: UpdateTaskCommentDto, @Param() params) {
-    return this.taskCommentService.update(taskComment, params.id);
+  @Put(':uuid')
+  update(
+    @Body(new ValidationPipe()) taskComment: UpdateTaskCommentDto,
+    @Param('uuid', ParseUUIDPipe) uuid: string
+  ) {
+    return this.taskCommentService.update(taskComment, uuid);
   }
 }

@@ -14,10 +14,10 @@ export class TaskTimeService {
     private taskCommentRepository: Repository<TaskTime>
   ) {}
 
-  async get(id: string): Promise<TaskTime> {
+  async get(uuid: string): Promise<TaskTime> {
     return await this.taskCommentRepository.findOne({
       where: {
-        id: id
+        id: uuid
       },
       relations: ['author', 'task'],
     });
@@ -36,8 +36,8 @@ export class TaskTimeService {
     })
   }
 
-  async update(taskTime: UpdateTaskTimeDto, taskTimeId: string): Promise<UpdateResult> {
-    return await this.taskCommentRepository.update(taskTimeId, {
+  async update(taskTime: UpdateTaskTimeDto, taskTimeUuid: string): Promise<UpdateResult> {
+    return await this.taskCommentRepository.update(taskTimeUuid, {
       ...taskTime,
       updatedAt: DateHelper.formatToDbDateTime(new Date())
     })

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { ProjectParticipantsDto } from './project-participants.dto';
 import { CreateProjectDto } from './create-project.dto';
@@ -9,9 +9,9 @@ export class ProjectController {
 
   constructor(private readonly projectService: ProjectService) {}
 
-  @Get(':id')
-  get(@Param() params) {
-    return this.projectService.get(params.id);
+  @Get(':uuid')
+  get(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.get(uuid);
   }
 
   @Get()
@@ -19,9 +19,12 @@ export class ProjectController {
     return this.projectService.getAll();
   }
 
-  @Get(':projectId/user-tasks/:userId')
-  getTasksByUser(@Param() params) {
-    return this.projectService.getUserTasks(params.projectId, params.userId);
+  @Get(':projectUuid/user-tasks/:userUuid')
+  getTasksByUser(
+    @Param('projectUuid', ParseUUIDPipe) projectUuid: string,
+    @Param('userUuid', ParseUUIDPipe) userUuid: string
+  ) {
+    return this.projectService.getUserTasks(projectUuid, userUuid);
   }
 
   @Post()
@@ -29,26 +32,29 @@ export class ProjectController {
     return this.projectService.create(project);
   }
 
-  @Put(':id')
-  update(@Body(new ValidationPipe()) project: UpdateProjectDto, @Param() params) {
-    return this.projectService.update(project, params.id);
+  @Put(':uuid')
+  update(
+    @Body(new ValidationPipe()) project: UpdateProjectDto,
+    @Param('uuid', ParseUUIDPipe) uuid: string
+  ) {
+    return this.projectService.update(project, uuid);
   }
 
-  @Delete(':id')
-  archive(@Param() params) {
-    return this.projectService.suspend(params.id);
+  @Delete(':uuid')
+  archive(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.suspend(uuid);
   }
 
-  @Post(':id/activate')
-  unblock(@Param() params) {
-    return this.projectService.activate(params.id);
+  @Post(':uuid/activate')
+  unblock(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.activate(uuid);
   }
 
-  @Post(':id/add-participants')
+  @Post(':uuid/add-participants')
   addParticipant(
     @Body(new ValidationPipe()) projectParticipants: ProjectParticipantsDto,
-    @Param() params
+    @Param('uuid', ParseUUIDPipe) uuid: string
   ) {
-    return this.projectService.addParticipant(projectParticipants, params.id);
+    return this.projectService.addParticipant(projectParticipants, uuid);
   }
 }

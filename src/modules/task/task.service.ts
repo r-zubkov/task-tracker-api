@@ -17,9 +17,9 @@ export class TaskService {
     private taskFlowService: TaskFlowService
   ) {}
 
-  async get(id: string): Promise<Task> {
+  async get(uuid: string): Promise<Task> {
     return await this.taskRepository.findOne({
-      where: {id: id},
+      where: {id: uuid},
       relations: ['project', 'executor', 'checker', 'author',
         'taskComments', 'taskComments.author',
         'taskTrackedTime', 'taskTrackedTime.author'],
@@ -31,13 +31,13 @@ export class TaskService {
       { relations: ['project', 'executor', 'checker', 'author'], });
   }
 
-  async getUserTrackedTime(userId: string): Promise<Task[]> {
+  async getUserTrackedTime(userUuid: string): Promise<Task[]> {
     return await this.taskRepository
       .createQueryBuilder('task')
       .leftJoinAndSelect("task.taskTrackedTime", "taskTrackedTime")
       .leftJoinAndSelect("task.project", "project")
       .leftJoinAndSelect("taskTrackedTime.author", "author")
-      .where("author.id = :id", { id: userId })
+      .where("author.id = :id", { id: userUuid })
       .getMany();
   }
 
@@ -48,19 +48,19 @@ export class TaskService {
     })
   }
 
-  async update(task: UpdateTaskDto, projectId: string): Promise<UpdateResult> {
-    return await this.taskRepository.update(projectId, {
+  async update(task: UpdateTaskDto, projectUuid: string): Promise<UpdateResult> {
+    return await this.taskRepository.update(projectUuid, {
       ...task,
       updatedAt: DateHelper.formatToDbDateTime(new Date())
     })
   }
 
-  async updateStatus(status: UpdateTaskStatusDto, taskId: string): Promise<UpdateResult | boolean> {
-    const task = await this.taskRepository.findOne(taskId);
+  async updateStatus(status: UpdateTaskStatusDto, taskUuid: string): Promise<UpdateResult | boolean> {
+    const task = await this.taskRepository.findOne(taskUuid);
     const newStatus = status.newStatus;
 
     if(task && this.taskFlowService.isAvailableNextStatus(task.status, newStatus)) {
-      return await this.taskRepository.update(taskId, {
+      return await this.taskRepository.update(taskUuid, {
         status: newStatus,
         startedAt: (newStatus === TaskStatusType.inWork) ? DateHelper.formatToDbDateTime(new Date()) : task.startedAt,
         executedAt: (newStatus === TaskStatusType.completed) ? DateHelper.formatToDbDateTime(new Date()) : task.executedAt,
