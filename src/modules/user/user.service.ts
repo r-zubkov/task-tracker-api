@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './create-user.dto';
-import { DateHelper } from '../../common/helpers/date.helper';
+import { DateHelper } from '../../shared/helpers/date.helper';
 import { UpdateUserDto } from './update-user.dto';
 
 @Injectable()

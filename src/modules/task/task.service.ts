@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { Task, TaskStatusType } from './task.entity';
-import { DateHelper } from '../../common/helpers/date.helper';
+import { DateHelper } from '../../shared/helpers/date.helper';
 import { CreateTaskDto } from './create-task.dto';
 import { UpdateTaskDto } from './update-task.dto';
 import { UpdateTaskStatusDto } from './update-task-status.dto';

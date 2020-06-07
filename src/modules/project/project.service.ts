@@ -6,7 +6,7 @@ import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { ProjectParticipantsDto } from './project-participants.dto';
 import { CreateProjectDto } from './create-project.dto';
-import { DateHelper } from '../../common/helpers/date.helper';
+import { DateHelper } from '../../shared/helpers/date.helper';
 import { UpdateProjectDto } from './update-project.dto';
 
 @Injectable()

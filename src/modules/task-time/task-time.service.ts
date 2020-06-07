@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
-import { DateHelper } from '../../common/helpers/date.helper';
+import { DateHelper } from '../../shared/helpers/date.helper';
 import { TaskTime } from './task-time.entity';
 import { CreateTaskTimeDto } from './create-task-time.dto';
 import { UpdateTaskTimeDto } from './update-task-time.dto';
