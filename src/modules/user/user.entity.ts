@@ -1,8 +1,9 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project/project.entity';
 import { Task } from '../task/task.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
 import { TaskTime } from '../task-time/task-time.entity';
+import { hash } from 'bcrypt'
 
 export enum UserType {
   user = 'user',
@@ -23,9 +24,6 @@ export class User {
 
   @Column({length: 20, nullable: false})
   password: string;
-
-  @Column({name: 'password_hash', length: 20, nullable: true})
-  passwordHash: string;
 
   @Column('enum', {enum: [UserType.user, UserType.admin], default: UserType.user})
   type: UserType;
@@ -75,4 +73,8 @@ export class User {
 
   @Column('datetime', {name: 'created_at', nullable: false})
   createdAt: Date;
+
+  @BeforeInsert()  async hashPassword() {
+    this.password = await hash(this.password, 10);
+  }
 }

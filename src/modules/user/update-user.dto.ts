@@ -21,11 +21,13 @@ export class UpdateUserDto {
   @IsString()
   @Length(10, 10)
   @Expose()
+  @IsOptional()
   readonly birthDate: string;
 
   @IsString()
   @Length(1, 15)
   @Expose()
+  @IsOptional()
   readonly number: string;
 
   @IsString()

@@ -1,9 +1,10 @@
-import { IsOptional, IsString, Length } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class CreateUserDto {
   @IsString()
   @Length(5, 32)
+  @IsEmail()
   @Expose()
   readonly email: string;
 
@@ -31,11 +32,13 @@ export class CreateUserDto {
   @IsString()
   @Length(10, 10)
   @Expose()
+  @IsOptional()
   readonly birthDate: string;
 
   @IsString()
   @Length(1, 15)
   @Expose()
+  @IsOptional()
   readonly number: string;
 
   @IsString()
