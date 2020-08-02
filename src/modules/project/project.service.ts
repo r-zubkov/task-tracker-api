@@ -6,7 +6,6 @@ import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { ProjectParticipantsDto } from './project-participants.dto';
 import { CreateProjectDto } from './create-project.dto';
-import { DateHelper } from '../../shared/helpers/date.helper';
 import { UpdateProjectDto } from './update-project.dto';
 
 @Injectable()
@@ -46,17 +45,11 @@ export class ProjectService {
   }
 
   async create(project: CreateProjectDto): Promise<InsertResult> {
-    return await this.projectRepository.insert({
-      ...project,
-      createdAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.projectRepository.insert(project);
   }
 
   async update(project: UpdateProjectDto, projectUuid: string): Promise<UpdateResult> {
-    return await this.projectRepository.update(projectUuid, {
-      ...project,
-      updatedAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.projectRepository.update(projectUuid, project)
   }
 
   async suspend(uuid: string): Promise<Project> {

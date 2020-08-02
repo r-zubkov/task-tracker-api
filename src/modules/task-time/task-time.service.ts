@@ -30,16 +30,10 @@ export class TaskTimeService {
   }
 
   async create(taskTime: CreateTaskTimeDto): Promise<InsertResult> {
-    return await this.taskCommentRepository.insert({
-      ...taskTime,
-      createdAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.taskCommentRepository.insert(taskTime)
   }
 
   async update(taskTime: UpdateTaskTimeDto, taskTimeUuid: string): Promise<UpdateResult> {
-    return await this.taskCommentRepository.update(taskTimeUuid, {
-      ...taskTime,
-      updatedAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.taskCommentRepository.update(taskTimeUuid, taskTime)
   }
 }

@@ -17,6 +17,12 @@ export class Project {
   @Column({length: 500, nullable: true})
   description: string;
 
+  @Column('datetime', {name: 'updated_at', nullable: true})
+  updatedAt: string;
+
+  @Column('datetime', {name: 'created_at', nullable: false})
+  createdAt: string;
+
   @ManyToOne(() => User, user => user.projectOwner, {nullable: false})
   owner: User;
 
@@ -25,10 +31,4 @@ export class Project {
 
   @OneToMany(() => Task, task => task.project, {nullable: false})
   tasks: Task[];
-
-  @Column('datetime', {name: 'updated_at', nullable: true})
-  updatedAt: Date;
-
-  @Column('datetime', {name: 'created_at', nullable: false})
-  createdAt: Date;
 }

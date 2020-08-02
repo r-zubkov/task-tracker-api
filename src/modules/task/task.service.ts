@@ -42,17 +42,11 @@ export class TaskService {
   }
 
   async create(task: CreateTaskDto): Promise<InsertResult> {
-    return await this.taskRepository.insert({
-      ...task,
-      createdAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.taskRepository.insert(task)
   }
 
   async update(task: UpdateTaskDto, projectUuid: string): Promise<UpdateResult> {
-    return await this.taskRepository.update(projectUuid, {
-      ...task,
-      updatedAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.taskRepository.update(projectUuid, task)
   }
 
   async updateStatus(status: UpdateTaskStatusDto, taskUuid: string): Promise<UpdateResult | boolean> {
@@ -63,8 +57,7 @@ export class TaskService {
       return await this.taskRepository.update(taskUuid, {
         status: newStatus,
         startedAt: (newStatus === TaskStatusType.inWork) ? DateHelper.formatToDbDateTime(new Date()) : task.startedAt,
-        executedAt: (newStatus === TaskStatusType.completed) ? DateHelper.formatToDbDateTime(new Date()) : task.executedAt,
-        updatedAt: DateHelper.formatToDbDateTime(new Date())
+        executedAt: (newStatus === TaskStatusType.completed) ? DateHelper.formatToDbDateTime(new Date()) : task.executedAt
       })
     }
 

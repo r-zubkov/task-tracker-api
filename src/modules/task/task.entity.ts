@@ -47,6 +47,24 @@ export class Task {
   @Column({length: 5000, nullable: true})
   description: string;
 
+  @Column('datetime', {name: 'time_start', nullable: true})
+  timeStart: Date;
+
+  @Column('datetime', {name: 'time_end', nullable: true})
+  timeEnd: Date;
+
+  @Column('datetime', {name: 'started_at', nullable: true})
+  startedAt: Date;
+
+  @Column('datetime', {name: 'executed_at', nullable: true})
+  executedAt: Date;
+
+  @Column('datetime', {name: 'updated_at', nullable: true})
+  updatedAt: string;
+
+  @Column('datetime', {name: 'created_at', nullable: false})
+  createdAt: string;
+
   @ManyToOne(() => Project, project => project.tasks, {nullable: false})
   project: Project;
 
@@ -64,22 +82,4 @@ export class Task {
 
   @OneToMany(() => TaskTime, taskTime => taskTime.task)
   taskTrackedTime: TaskTime[];
-
-  @Column('datetime', {name: 'time_start', nullable: true})
-  timeStart: Date;
-
-  @Column('datetime', {name: 'time_end', nullable: true})
-  timeEnd: Date;
-
-  @Column('datetime', {name: 'started_at', nullable: true})
-  startedAt: Date;
-
-  @Column('datetime', {name: 'executed_at', nullable: true})
-  executedAt: Date;
-
-  @Column('datetime', {name: 'updated_at', nullable: true})
-  updatedAt: Date;
-
-  @Column('datetime', {name: 'created_at', nullable: false})
-  createdAt: Date;
 }

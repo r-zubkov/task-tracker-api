@@ -30,16 +30,10 @@ export class TaskCommentService {
   }
 
   async create(taskComment: CreateTaskCommentDto): Promise<InsertResult> {
-    return await this.taskCommentRepository.insert({
-      ...taskComment,
-      createdAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.taskCommentRepository.insert(taskComment)
   }
 
   async update(taskComment: UpdateTaskCommentDto, taskCommentUuid: string): Promise<UpdateResult> {
-    return await this.taskCommentRepository.update(taskCommentUuid, {
-      ...taskComment,
-      updatedAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.taskCommentRepository.update(taskCommentUuid, taskComment)
   }
 }
