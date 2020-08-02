@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { TaskComment } from './task-comment.entity';
-import { DateHelper } from '../../shared/helpers/date.helper';
 import { CreateTaskCommentDto } from './create-task-comment.dto';
 import { UpdateTaskCommentDto } from './update-task-comment.dto';
 
