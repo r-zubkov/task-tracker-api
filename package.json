@@ -29,14 +29,16 @@
     "@nestjs/typeorm": "^7.0.0",
     "@types/bcrypt": "^3.0.0",
     "@types/passport": "^1.0.3",
-    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "mysql": "^2.18.1",
+    "npm": "^6.14.7",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
-    "typeorm": "^0.2.25"
+    "typeorm": "^0.2.25",
+    "uninstall": "0.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",

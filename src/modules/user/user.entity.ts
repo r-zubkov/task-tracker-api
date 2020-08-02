@@ -1,9 +1,8 @@
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project/project.entity';
 import { Task } from '../task/task.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
 import { TaskTime } from '../task-time/task-time.entity';
-import { hash } from 'bcrypt'
 
 export enum UserType {
   user = 'user',
@@ -22,7 +21,7 @@ export class User {
   @Column({length: 32, unique: true, nullable: false})
   email: string;
 
-  @Column({length: 20, nullable: false})
+  @Column({length: 100, nullable: false})
   password: string;
 
   @Column('enum', {enum: [UserType.user, UserType.admin], default: UserType.user})
@@ -46,6 +45,12 @@ export class User {
   @Column({length: 500, nullable: true})
   description: string;
 
+  @Column('datetime', {name: 'updated_at', nullable: true})
+  updatedAt: string;
+
+  @Column('datetime', {name: 'created_at', nullable: false})
+  createdAt: string;
+
   @OneToMany(() => Project, projectOwner => projectOwner.owner)
   projectOwner: Project[];
 
@@ -67,14 +72,4 @@ export class User {
 
   @OneToMany(() => TaskComment, commentAuthor => commentAuthor.author)
   commentAuthor: TaskComment[];
-
-  @Column('datetime', {name: 'updated_at', nullable: true})
-  updatedAt: Date;
-
-  @Column('datetime', {name: 'created_at', nullable: false})
-  createdAt: Date;
-
-  @BeforeInsert()  async hashPassword() {
-    this.password = await hash(this.password, 10);
-  }
 }

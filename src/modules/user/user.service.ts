@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './create-user.dto';
-import { DateHelper } from '../../shared/helpers/date.helper';
 import { UpdateUserDto } from './update-user.dto';
 
 @Injectable()
@@ -28,17 +27,11 @@ export class UserService {
   }
 
   async create(user: CreateUserDto): Promise<InsertResult> {
-    return await this.usersRepository.insert({
-      ...user,
-      createdAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.usersRepository.insert(user)
   }
 
   async update(user: UpdateUserDto, userUuid: string): Promise<UpdateResult> {
-    return await this.usersRepository.update(userUuid, {
-      ...user,
-      updatedAt: DateHelper.formatToDbDateTime(new Date())
-    })
+    return await this.usersRepository.update(userUuid, user)
   }
 
   async block(uuid: string): Promise<User> {
