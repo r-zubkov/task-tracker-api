@@ -1,33 +1,42 @@
 import { Module } from '@nestjs/common';
 import { UserModule } from './modules/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './modules/user/user.entity';
 import { ProjectModule } from './modules/project/project.module';
-import { Project } from './modules/project/project.entity';
 import { TaskModule } from './modules/task/task.module';
+import { TaskCommentModule } from './modules/task-comment/task-comment.module';
+import { TaskTimeModule } from './modules/task-time/task-time.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { User } from './modules/user/user.entity';
+import { Project } from './modules/project/project.entity';
 import { Task } from './modules/task/task.entity';
 import { TaskComment } from './modules/task-comment/task-comment.entity';
-import { TaskCommentModule } from './modules/task-comment/task-comment.module';
 import { TaskTime } from './modules/task-time/task-time.entity';
-import { TaskTimeModule } from './modules/task-time/task-time.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: '172.10.1.3',
-      port: 3306,
-      username: 'timetracker',
-      password: 'timetracker',
-      database: 'timetracker',
-      entities: [
-        User,
-        Project,
-        Task,
-        TaskComment,
-        TaskTime
-      ],
-      synchronize: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['src/env/.database.env', 'src/env/.auth.env']
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get('DATABASE_HOST'),
+        port: configService.get<number>('DATABASE_PORT'),
+        username: configService.get('DATABASE_USER'),
+        password: configService.get('DATABASE_PASSWORD'),
+        database: configService.get('DATABASE_NAME'),
+        entities: [
+          User,
+          Project,
+          Task,
+          TaskComment,
+          TaskTime
+        ],
+        synchronize: true,
+      })
     }),
     UserModule,
     ProjectModule,
