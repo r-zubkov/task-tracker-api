@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './create-user.dto';
 import { UpdateUserDto } from './update-user.dto';
 import { TaskService } from '../task/task.service';
 
@@ -25,11 +24,6 @@ export class UserController {
   @Get(':uuid/tracked-time')
   getTasksByUser(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.taskService.getUserTrackedTime(uuid);
-  }
-
-  @Post()
-  create(@Body(new ValidationPipe()) user: CreateUserDto) {
-    return this.userService.create(user);
   }
 
   @Put(':uuid')

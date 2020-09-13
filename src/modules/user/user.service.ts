@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './create-user.dto';
 import { UpdateUserDto } from './update-user.dto';
+import { LoginUserDto } from './login-user.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -67,4 +69,28 @@ export class UserService {
   async updateParticipantsState(participants: User[]): Promise<User[]> {
     return await this.usersRepository.save(participants);
   }
+
+  async findByEmail({ email, password }: LoginUserDto): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { email: email } });
+    const errMessage = 'Invalid password or email.';
+
+    if (!user) {
+      throw new HttpException(errMessage, HttpStatus.UNAUTHORIZED);
+    }
+
+    const areEqual = await this.comparePasswords(user.password, password);
+    if (!areEqual) {
+      throw new HttpException(errMessage, HttpStatus.UNAUTHORIZED);
+    }
+
+    return user;
+  }
+
+  async findByPayload({ email }: any): Promise<User> {
+    return await this.usersRepository.findOne({ where: { email: email } });
+  }
+
+  async comparePasswords(userPassword, currentPassword) {
+    return await bcrypt.compare(currentPassword, userPassword);
+  };
 }

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectModule } from './modules/project/project.module';
 import { TaskModule } from './modules/task/task.module';
@@ -38,7 +38,7 @@ import { TaskTime } from './modules/task-time/task-time.entity';
         synchronize: true,
       })
     }),
-    UserModule,
+    AuthModule,
     ProjectModule,
     TaskModule,
     TaskCommentModule,

@@ -36,10 +36,10 @@ export class User {
   @Column({name: 'last_name', length: 30, nullable: false})
   lastName: string;
 
-  @Column('date', {name: 'birth_date', nullable: false})
+  @Column('date', {name: 'birth_date', nullable: true})
   birthDate: Date;
 
-  @Column({length: 15, nullable: false})
+  @Column({length: 15, nullable: true})
   number: string;
 
   @Column({length: 500, nullable: true})
