@@ -4,7 +4,7 @@ import { Task } from '../task/task.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
 import { TaskTime } from '../task-time/task-time.entity';
 
-export enum UserType {
+export enum UserRole {
   user = 'user',
   admin = 'admin'
 }
@@ -24,8 +24,8 @@ export class User {
   @Column({length: 100, nullable: false})
   password: string;
 
-  @Column('enum', {enum: [UserType.user, UserType.admin], default: UserType.user})
-  type: UserType;
+  @Column('enum', {enum: [UserRole.user, UserRole.admin], default: UserRole.user})
+  role: UserRole;
 
   @Column({name: 'first_name', length: 30, nullable: false})
   firstName: string;

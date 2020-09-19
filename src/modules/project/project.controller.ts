@@ -14,7 +14,9 @@ import { ProjectService } from './project.service';
 import { ProjectParticipantsDto } from './project-participants.dto';
 import { CreateProjectDto } from './create-project.dto';
 import { UpdateProjectDto } from './update-project.dto';
-import { JwtAuthGuard } from '../../core/jwt-auth.guard';
+import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
+import { UserRole } from '../user/user.entity';
+import { Role } from '../../core/decorators/role.decorator';
 
 @Controller('project')
 @UseGuards(JwtAuthGuard)
@@ -41,6 +43,7 @@ export class ProjectController {
   }
 
   @Post()
+  @Role(UserRole.admin)
   create(@Body(new ValidationPipe()) project: CreateProjectDto) {
     return this.projectService.create(project);
   }

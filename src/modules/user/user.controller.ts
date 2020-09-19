@@ -13,7 +13,7 @@ import {
 import { UserService } from './user.service';
 import { UpdateUserDto } from './update-user.dto';
 import { TaskService } from '../task/task.service';
-import { JwtAuthGuard } from '../../core/jwt-auth.guard';
+import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)

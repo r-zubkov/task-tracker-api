@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Vali
 import { TaskCommentService } from './task-comment.service';
 import { CreateTaskCommentDto } from './create-task-comment.dto';
 import { UpdateTaskCommentDto } from './update-task-comment.dto';
-import { JwtAuthGuard } from '../../core/jwt-auth.guard';
+import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 
 @Controller('task-comment')
 @UseGuards(JwtAuthGuard)

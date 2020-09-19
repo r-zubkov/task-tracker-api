@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Vali
 import { TaskTimeService } from './task-time.service';
 import { CreateTaskTimeDto } from './create-task-time.dto';
 import { UpdateTaskTimeDto } from './update-task-time.dto';
-import { JwtAuthGuard } from '../../core/jwt-auth.guard';
+import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 
 @Controller('task-time')
 @UseGuards(JwtAuthGuard)
