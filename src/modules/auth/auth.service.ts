@@ -5,6 +5,7 @@ import { CreateUserDto } from '../user/create-user.dto';
 import { JwtPayload } from './jwt.strategy';
 import { User } from '../user/user.entity';
 import { LoginUserDto } from '../user/login-user.dto';
+import { ConfigService } from '@nestjs/config';
 
 export interface AuthStatus {
   success: boolean;
@@ -14,13 +15,14 @@ export interface AuthStatus {
 
 @Injectable()
 export class AuthService {
+
   constructor(
     private readonly usersService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService
   ) {}
 
-  async signUp(userDto: CreateUserDto):
-    Promise<AuthStatus> {
+  async signUp(userDto: CreateUserDto): Promise<AuthStatus> {
     let status: AuthStatus = {
       success: true,
       message: 'user registered',
@@ -49,7 +51,7 @@ export class AuthService {
     const user: JwtPayload = { email };
     const accessToken = this.jwtService.sign(user);
     return {
-      expiresIn: process.env.EXPIRESIN,
+      expiresIn: this.configService.get('AUTH_EXPIRESIN'),
       accessToken,
     };
   }

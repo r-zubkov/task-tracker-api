@@ -1,11 +1,23 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './update-user.dto';
 import { TaskService } from '../task/task.service';
+import { JwtAuthGuard } from '../../core/jwt-auth.guard';
 
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 export class UserController {
-
   constructor(
     private readonly userService: UserService,
     private readonly taskService: TaskService

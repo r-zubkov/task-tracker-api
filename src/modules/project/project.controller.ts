@@ -1,10 +1,23 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { ProjectParticipantsDto } from './project-participants.dto';
 import { CreateProjectDto } from './create-project.dto';
 import { UpdateProjectDto } from './update-project.dto';
+import { JwtAuthGuard } from '../../core/jwt-auth.guard';
 
 @Controller('project')
+@UseGuards(JwtAuthGuard)
 export class ProjectController {
 
   constructor(private readonly projectService: ProjectService) {}

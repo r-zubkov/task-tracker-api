@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, ValidationPipe } from '@nestjs/common';
 import { TaskTimeService } from './task-time.service';
 import { CreateTaskTimeDto } from './create-task-time.dto';
 import { UpdateTaskTimeDto } from './update-task-time.dto';
+import { JwtAuthGuard } from '../../core/jwt-auth.guard';
 
 @Controller('task-time')
+@UseGuards(JwtAuthGuard)
 export class TaskTimeController {
 
   constructor(private readonly taskTimeService: TaskTimeService) {}

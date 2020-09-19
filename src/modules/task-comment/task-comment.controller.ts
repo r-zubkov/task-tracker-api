@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, ValidationPipe } from '@nestjs/common';
 import { TaskCommentService } from './task-comment.service';
 import { CreateTaskCommentDto } from './create-task-comment.dto';
 import { UpdateTaskCommentDto } from './update-task-comment.dto';
+import { JwtAuthGuard } from '../../core/jwt-auth.guard';
 
 @Controller('task-comment')
+@UseGuards(JwtAuthGuard)
 export class TaskCommentController {
 
   constructor(private readonly taskCommentService: TaskCommentService) {}

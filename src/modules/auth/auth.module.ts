@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
@@ -9,7 +9,7 @@ import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
     PassportModule.register({
       defaultStrategy: 'jwt',
       property: 'user',
@@ -21,7 +21,7 @@ import { UserModule } from '../user/user.module';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('AUTH_SECRETKEY'),
         signOptions: {
-          expiresIn: configService.get('AUTH_EXPIRESIN'),
+          expiresIn: `${configService.get('AUTH_EXPIRESIN')}s`,
         },
       }),
     }),
