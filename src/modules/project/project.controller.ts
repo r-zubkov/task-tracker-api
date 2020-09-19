@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -44,11 +45,12 @@ export class ProjectController {
 
   @Post()
   @Role(UserRole.admin)
-  create(@Body(new ValidationPipe()) project: CreateProjectDto) {
-    return this.projectService.create(project);
+  create(@Body(new ValidationPipe()) project: CreateProjectDto, @Req() request) {
+    return this.projectService.create(project, request.user);
   }
 
   @Put(':uuid')
+  @Role(UserRole.admin)
   update(
     @Body(new ValidationPipe()) project: UpdateProjectDto,
     @Param('uuid', ParseUUIDPipe) uuid: string
@@ -57,16 +59,19 @@ export class ProjectController {
   }
 
   @Delete(':uuid')
+  @Role(UserRole.admin)
   archive(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.projectService.suspend(uuid);
   }
 
   @Post(':uuid/activate')
+  @Role(UserRole.admin)
   unblock(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.projectService.activate(uuid);
   }
 
   @Post(':uuid/add-participants')
+  @Role(UserRole.admin)
   addParticipant(
     @Body(new ValidationPipe()) projectParticipants: ProjectParticipantsDto,
     @Param('uuid', ParseUUIDPipe) uuid: string

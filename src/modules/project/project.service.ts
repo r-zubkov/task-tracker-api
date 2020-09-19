@@ -44,8 +44,8 @@ export class ProjectService {
       .getMany();
   }
 
-  async create(project: CreateProjectDto): Promise<InsertResult> {
-    return await this.projectRepository.insert(project);
+  async create(project: CreateProjectDto, author: User): Promise<InsertResult> {
+    return await this.projectRepository.insert({...project, owner: author});
   }
 
   async update(project: UpdateProjectDto, projectUuid: string): Promise<UpdateResult> {

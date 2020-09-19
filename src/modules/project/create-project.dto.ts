@@ -1,6 +1,5 @@
-import { IsOptional, IsString, IsUUID, Length } from 'class-validator';
+import { IsOptional, IsString, Length } from 'class-validator';
 import { Expose } from 'class-transformer';
-import { User } from '../user/user.entity';
 
 export class CreateProjectDto {
   @IsString()
@@ -13,7 +12,4 @@ export class CreateProjectDto {
   @Expose()
   @IsOptional()
   readonly description: string;
-
-  @IsUUID()
-  readonly owner: User;
 }

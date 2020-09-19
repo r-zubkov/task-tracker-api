@@ -71,7 +71,9 @@ export class UserService {
   }
 
   async findByEmail({ email, password }: LoginUserDto): Promise<User> {
-    const user = await this.usersRepository.findOne({ where: { email: email } });
+    const user = await this.usersRepository.findOne({
+      where: { email: email, isActive: true }
+    });
     const errMessage = 'Invalid password or email.';
 
     if (!user) {
@@ -87,7 +89,9 @@ export class UserService {
   }
 
   async findByPayload({ email }: any): Promise<User> {
-    return await this.usersRepository.findOne({ where: { email: email } });
+    return await this.usersRepository.findOne({
+      where: { email: email, isActive: true }
+    });
   }
 
   async comparePasswords(userPassword, currentPassword) {
