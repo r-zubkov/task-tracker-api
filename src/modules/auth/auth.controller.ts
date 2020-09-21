@@ -9,7 +9,7 @@ export class AuthController {
     private readonly authService: AuthService
   ) {}
 
-  @Post('sing-up')
+  @Post('sign-up')
   public async register(@Body(new ValidationPipe()) user: CreateUserDto): Promise<AuthStatus> {
     const result: AuthStatus = await this.authService.signUp(user);
     if (!result.success) {

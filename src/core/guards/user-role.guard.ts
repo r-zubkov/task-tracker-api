@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { User, UserRole } from '../../modules/user/user.entity';
 
 @Injectable()
-export class RoleGuard implements CanActivate {
+export class UserRoleGuard implements CanActivate {
 
   constructor(private role: UserRole) {}
 

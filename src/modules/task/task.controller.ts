@@ -41,5 +41,4 @@ export class TaskController {
   ) {
     return this.taskService.updateStatus(status, uuid);
   }
-
 }

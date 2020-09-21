@@ -14,6 +14,9 @@ import { UserService } from './user.service';
 import { UpdateUserDto } from './update-user.dto';
 import { TaskService } from '../task/task.service';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
+import { Role } from '../../core/decorators/role.decorator';
+import { UserRole } from './user.entity';
+import { ProfileUpdate } from '../../core/decorators/profile-update.decorator';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
@@ -23,36 +26,40 @@ export class UserController {
     private readonly taskService: TaskService
   ) {}
 
-  @Get(':uuid')
-  get(@Param('uuid', ParseUUIDPipe) uuid: string) {
+  @Get(':userUuid')
+  get(@Param('userUuid', ParseUUIDPipe) uuid: string) {
     return this.userService.get(uuid);
   }
 
   @Get()
+  @Role(UserRole.admin)
   getAll() {
     return this.userService.getAll();
   }
 
-  @Get(':uuid/tracked-time')
-  getTasksByUser(@Param('uuid', ParseUUIDPipe) uuid: string) {
+  @Get(':userUuid/tracked-time')
+  getTasksByUser(@Param('userUuid', ParseUUIDPipe) uuid: string) {
     return this.taskService.getUserTrackedTime(uuid);
   }
 
-  @Put(':uuid')
+  @Put(':userUuid')
+  @ProfileUpdate()
   update(
     @Body(new ValidationPipe()) user: UpdateUserDto,
-    @Param('uuid', ParseUUIDPipe) uuid: string
+    @Param('userUuid', ParseUUIDPipe) uuid: string
   ) {
     return this.userService.update(user, uuid);
   }
 
-  @Delete(':uuid')
-  block(@Param('uuid', ParseUUIDPipe) uuid: string) {
+  @Delete(':userUuid')
+  @Role(UserRole.admin)
+  block(@Param('userUuid', ParseUUIDPipe) uuid: string) {
     return this.userService.block(uuid);
   }
 
-  @Post(':uuid/unblock')
-  unblock(@Param('uuid', ParseUUIDPipe) uuid: string) {
+  @Post(':userUuid/unblock')
+  @Role(UserRole.admin)
+  unblock(@Param('userUuid', ParseUUIDPipe) uuid: string) {
     return this.userService.unblock(uuid);
   }
 }
