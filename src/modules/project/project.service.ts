@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { InsertResult, Repository, UpdateResult } from 'typeorm';
+import { Connection, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
@@ -14,7 +14,8 @@ export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private projectRepository: Repository<Project>,
-    private userService: UserService
+    private userService: UserService,
+    private connection: Connection,
   ) {}
 
   async get(uuid: string): Promise<Project> {
@@ -74,14 +75,25 @@ export class ProjectService {
     return await this.projectRepository.save(project);
   }
 
-  async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<User[]> {
+  async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<any> {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     const project = await this.projectRepository.findOne(projectUuid);
     const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
 
-    for (const participant of participants) {
-      participant.projectParticipant.push(project);
-    }
+    try {
+      for (const participant of participants) {
+        await queryRunner.manager.save({
+          ...participant,
+          projectParticipant: participant.projectParticipant.push(project)
+        });
+      }
 
-    return this.userService.updateParticipantsState(participants);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    }
   }
 }
