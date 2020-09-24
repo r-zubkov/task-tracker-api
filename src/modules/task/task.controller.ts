@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, ValidationPipe } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { CreateTaskDto } from './create-task.dto';
-import { UpdateTaskDto } from './update-task.dto';
-import { UpdateTaskStatusDto } from './update-task-status.dto';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 
 @Controller('task')

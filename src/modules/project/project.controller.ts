@@ -12,9 +12,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { ProjectParticipantsDto } from './project-participants.dto';
-import { CreateProjectDto } from './create-project.dto';
-import { UpdateProjectDto } from './update-project.dto';
+import { ProjectParticipantsDto } from './dto/project-participants.dto';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { UserRole } from '../user/user.entity';
 import { Role } from '../../core/decorators/role.decorator';

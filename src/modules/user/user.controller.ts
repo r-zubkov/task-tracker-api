@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UpdateUserDto } from './update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { TaskService } from '../task/task.service';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { Role } from '../../core/decorators/role.decorator';

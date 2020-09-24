@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { TaskTime } from './task-time.entity';
-import { CreateTaskTimeDto } from './create-task-time.dto';
-import { UpdateTaskTimeDto } from './update-task-time.dto';
+import { CreateTaskTimeDto } from './dto/create-task-time.dto';
+import { UpdateTaskTimeDto } from './dto/update-task-time.dto';
 
 @Injectable()
 export class TaskTimeService {

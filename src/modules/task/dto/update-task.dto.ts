@@ -1,7 +1,7 @@
 import { IsEnum, IsInt, IsOptional, IsPositive, IsString, IsUUID, Length, Max, Min } from 'class-validator';
 import { Expose } from 'class-transformer';
-import { PriorityType } from './task.entity';
-import { User } from '../user/user.entity';
+import { PriorityType } from '../task.entity';
+import { User } from '../../user/user.entity';
 
 export class UpdateTaskDto {
   @IsString()

@@ -1,6 +1,6 @@
 import { IsString, IsUUID, Length } from 'class-validator';
-import { Task } from '../task/task.entity';
-import { User } from '../user/user.entity';
+import { Task } from '../../task/task.entity';
+import { User } from '../../user/user.entity';
 import { Expose } from 'class-transformer';
 
 export class CreateTaskCommentDto {

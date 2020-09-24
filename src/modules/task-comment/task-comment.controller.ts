@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, ValidationPipe } from '@nestjs/common';
 import { TaskCommentService } from './task-comment.service';
-import { CreateTaskCommentDto } from './create-task-comment.dto';
-import { UpdateTaskCommentDto } from './update-task-comment.dto';
+import { CreateTaskCommentDto } from './dto/create-task-comment.dto';
+import { UpdateTaskCommentDto } from './dto/update-task-comment.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 
 @Controller('task-comment')

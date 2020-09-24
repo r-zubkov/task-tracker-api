@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, ValidationPipe } from '@nestjs/common';
 import { TaskTimeService } from './task-time.service';
-import { CreateTaskTimeDto } from './create-task-time.dto';
-import { UpdateTaskTimeDto } from './update-task-time.dto';
+import { CreateTaskTimeDto } from './dto/create-task-time.dto';
+import { UpdateTaskTimeDto } from './dto/update-task-time.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 
 @Controller('task-time')
