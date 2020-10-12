@@ -3,6 +3,7 @@ import { Project } from '../project/project.entity';
 import { Task } from '../task/task.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
 import { TaskTime } from '../task-time/task-time.entity';
+import { Exclude } from 'class-transformer';
 
 export enum UserRole {
   user = 'user',
@@ -22,6 +23,7 @@ export class User {
   email: string;
 
   @Column({length: 100, nullable: false})
+  @Exclude()
   password: string;
 
   @Column('enum', {enum: [UserRole.user, UserRole.admin], default: UserRole.user})
