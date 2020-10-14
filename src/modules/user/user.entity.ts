@@ -74,4 +74,8 @@ export class User {
 
   @OneToMany(() => TaskComment, commentAuthor => commentAuthor.author)
   commentAuthor: TaskComment[];
+
+  get isAdmin(): boolean {
+    return this.role === UserRole.admin;
+  }
 }

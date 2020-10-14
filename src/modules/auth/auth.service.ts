@@ -6,12 +6,7 @@ import { JwtPayload } from './jwt.strategy';
 import { User } from '../user/user.entity';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { ConfigService } from '@nestjs/config';
-
-export interface AuthStatus {
-  success: boolean;
-  message?: string;
-  authToken?: string;
-}
+import { ApiResponse, ApiResponseHelper } from '../../shared/helpers/api-response.helper';
 
 @Injectable()
 export class AuthService {
@@ -22,29 +17,20 @@ export class AuthService {
     private readonly configService: ConfigService
   ) {}
 
-  async signUp(userDto: CreateUserDto): Promise<AuthStatus> {
-    let status: AuthStatus = {
-      success: true,
-      message: 'user registered',
-    };
+  async signUp(userDto: CreateUserDto): Promise<ApiResponse | HttpException> {
     try {
       await this.usersService.create(userDto);
+      return ApiResponseHelper.generateSuccessMessage('User successfully registered')
     } catch (err) {
-      status = {
-        success: false,
-        message: err,
-      };
+      throw new HttpException("An error occurred while registering user", HttpStatus.BAD_REQUEST)
     }
-    return status;
   }
 
-  async signIn(loginUserDto: LoginUserDto): Promise<AuthStatus> {
+  async signIn(loginUserDto: LoginUserDto): Promise<ApiResponse> {
     const user = await this.usersService.findByEmail(loginUserDto);
     const token = this._createToken(user);
 
-    return {
-      success: true, authToken: token,
-    };
+    return ApiResponseHelper.generateSuccessMessage('Success', null, { authToken: token })
   }
 
   private _createToken({ email }: User): any {

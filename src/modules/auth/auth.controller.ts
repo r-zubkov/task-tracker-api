@@ -1,5 +1,5 @@
-import { Body, Controller, HttpException, HttpStatus, Post, ValidationPipe } from '@nestjs/common';
-import { AuthService, AuthStatus } from './auth.service';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 
@@ -10,16 +10,12 @@ export class AuthController {
   ) {}
 
   @Post('sign-up')
-  public async register(@Body(new ValidationPipe()) user: CreateUserDto): Promise<AuthStatus> {
-    const result: AuthStatus = await this.authService.signUp(user);
-    if (!result.success) {
-      throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
-    }
-    return result;
+  public async register(@Body(new ValidationPipe()) user: CreateUserDto) {
+    return await this.authService.signUp(user);
   }
 
   @Post('sign-in')
-  public async login(@Body(new ValidationPipe()) user: LoginUserDto): Promise<AuthStatus> {
+  public async login(@Body(new ValidationPipe()) user: LoginUserDto) {
     return await this.authService.signIn(user);
   }
 }

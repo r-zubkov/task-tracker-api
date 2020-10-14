@@ -31,8 +31,8 @@ export class ProjectController {
   }
 
   @Get()
-  getAll() {
-    return this.projectService.getAll();
+  getAll(@Req() request) {
+    return this.projectService.getAll(request.user);
   }
 
   @Get(':projectUuid/user-tasks/:userUuid')

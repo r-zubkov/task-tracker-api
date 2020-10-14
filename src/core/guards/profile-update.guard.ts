@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { User, UserRole } from '../../modules/user/user.entity';
+import { User } from '../../modules/user/user.entity';
 
 @Injectable()
 export class ProfileUpdateGuard implements CanActivate {
@@ -11,6 +11,6 @@ export class ProfileUpdateGuard implements CanActivate {
     const user: User = request.user;
     const userUuid: string = this.userUuid || request.params.userUuid;
 
-    return user.id === userUuid || user.role === UserRole.admin;
+    return user.isAdmin || user.id === userUuid;
   }
 }

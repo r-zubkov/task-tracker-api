@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { ProjectParticipantsDto } from './dto/project-participants.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { ApiResponse } from '../../shared/helpers/api-response.helper';
+import { ApiResponseHelper } from '../../shared/helpers/api-response.helper';
 
 @Injectable()
 export class ProjectService {
@@ -27,10 +29,18 @@ export class ProjectService {
     });
   }
 
-  async getAll(): Promise<Project[]> {
-    return await this.projectRepository.find({
-        relations: ['owner'],
-      });
+  async getAll(user: User): Promise<Project[]> {
+    const query = await this.projectRepository
+      .createQueryBuilder('project')
+      .leftJoinAndSelect("project.owner", "owner");
+
+    if (!user.isAdmin) {
+      query
+        .leftJoin("project.participants", "participant")
+        .where("participant.id = :userId", { userId: user.id });
+    }
+
+    return query.getMany();
   }
 
   async getUserTasks(projectUuid: string, userUuid: string): Promise<Project[]> {
@@ -45,12 +55,22 @@ export class ProjectService {
       .getMany();
   }
 
-  async create(project: CreateProjectDto, author: User): Promise<InsertResult> {
-    return await this.projectRepository.insert({...project, owner: author});
+  async create(project: CreateProjectDto, author: User): Promise<ApiResponse | HttpException> {
+    try {
+      const entity = await this.projectRepository.insert({...project, owner: author});
+      return ApiResponseHelper.generateSuccessMessage('Project successfully created', entity);
+    } catch (err) {
+      throw new HttpException("An error occurred while creating project", HttpStatus.BAD_REQUEST)
+    }
   }
 
-  async update(project: UpdateProjectDto, projectUuid: string): Promise<UpdateResult> {
-    return await this.projectRepository.update(projectUuid, project)
+  async update(project: UpdateProjectDto, projectUuid: string): Promise<ApiResponse | HttpException> {
+    try {
+      const entity = await this.projectRepository.update(projectUuid, project);
+      return ApiResponseHelper.generateSuccessMessage('Project successfully updated', entity);
+    } catch (err) {
+      throw new HttpException("An error occurred while updating project", HttpStatus.BAD_REQUEST)
+    }
   }
 
   async suspend(uuid: string): Promise<Project> {
@@ -75,25 +95,31 @@ export class ProjectService {
     return await this.projectRepository.save(project);
   }
 
-  async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<any> {
+  async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<ApiResponse | HttpException> {
+    const project = await this.projectRepository.findOne(projectUuid, {where: {isActive: true}});
+    const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
+
+    if (!project || participants.length === 0) {
+      throw new HttpException("Invalid request", HttpStatus.BAD_REQUEST);
+    }
+
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const project = await this.projectRepository.findOne(projectUuid);
-    const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
-
     try {
       for (const participant of participants) {
-        await queryRunner.manager.save({
-          ...participant,
-          projectParticipant: participant.projectParticipant.push(project)
-        });
+        participant.projectParticipant.push(project);
+        await queryRunner.manager.save(participant);
       }
-
       await queryRunner.commitTransaction();
+
+      return ApiResponseHelper.generateSuccessMessage('Participants successfully added');
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      throw new HttpException("An error occurred while adding participants", HttpStatus.BAD_REQUEST);
+    } finally {
+      await queryRunner.release();
     }
   }
 }

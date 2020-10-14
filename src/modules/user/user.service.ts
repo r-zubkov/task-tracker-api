@@ -62,12 +62,9 @@ export class UserService {
 
   async findUsersByIds(uuids: string[]): Promise<User[]> {
     return await this.usersRepository.findByIds(uuids, {
-        relations: ['projectParticipant']
-      });
-  }
-
-  async updateParticipantsState(participants: User[]): Promise<User[]> {
-    return await this.usersRepository.save(participants);
+      where: { isActive: true },
+      relations: ['projectParticipant']
+    });
   }
 
   async findByEmail({ email, password }: LoginUserDto): Promise<User> {
