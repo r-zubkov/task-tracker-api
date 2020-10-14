@@ -7,7 +7,11 @@ import { UserService } from '../user/user.service';
 import { ProjectParticipantsDto } from './dto/project-participants.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { ApiResponse } from '../../shared/helpers/api-response.helper';
+import {
+  ApiActionResponse,
+  ApiEntityResponse,
+  ApiListResponse,
+} from '../../shared/helpers/api-response.helper';
 import { ApiResponseHelper } from '../../shared/helpers/api-response.helper';
 
 @Injectable()
@@ -20,27 +24,35 @@ export class ProjectService {
     private connection: Connection,
   ) {}
 
-  async get(uuid: string): Promise<Project> {
-    return await this.projectRepository.findOne({
+  async get(uuid: string): Promise<ApiEntityResponse<Project>> {
+    const entity = await this.projectRepository.findOne({
       where: {
         id: uuid
       },
       relations: ['owner', 'participants', 'tasks', 'tasks.executor', 'tasks.checker', 'tasks.author'],
     });
+
+    if (!entity) {
+      throw new HttpException("Project not found", HttpStatus.NOT_FOUND)
+    }
+
+    return ApiResponseHelper.entity(entity);
   }
 
-  async getAll(user: User): Promise<Project[]> {
-    const query = await this.projectRepository
+  async getAll(user: User): Promise<ApiListResponse<Project>> {
+    const query = this.projectRepository
       .createQueryBuilder('project')
       .leftJoinAndSelect("project.owner", "owner");
 
     if (!user.isAdmin) {
       query
         .leftJoin("project.participants", "participant")
-        .where("participant.id = :userId", { userId: user.id });
+        .where("project.isActive = :isActive", { isActive: true })
+        .andWhere("participant.id = :userId", { userId: user.id });
     }
 
-    return query.getMany();
+    const result = await query.getMany();
+    return ApiResponseHelper.list(result);
   }
 
   async getUserTasks(projectUuid: string, userUuid: string): Promise<Project[]> {
@@ -55,47 +67,58 @@ export class ProjectService {
       .getMany();
   }
 
-  async create(project: CreateProjectDto, author: User): Promise<ApiResponse | HttpException> {
+  async create(project: CreateProjectDto, author: User): Promise<ApiActionResponse | HttpException> {
     try {
       const entity = await this.projectRepository.insert({...project, owner: author});
-      return ApiResponseHelper.successActionResponse('Project successfully created', entity);
+      return ApiResponseHelper.successAction('Project successfully created', entity);
     } catch (err) {
       throw new HttpException("An error occurred while creating project", HttpStatus.BAD_REQUEST)
     }
   }
 
-  async update(project: UpdateProjectDto, projectUuid: string): Promise<ApiResponse | HttpException> {
+  async update(project: UpdateProjectDto, projectUuid: string): Promise<ApiActionResponse | HttpException> {
     try {
       const entity = await this.projectRepository.update(projectUuid, project);
-      return ApiResponseHelper.successActionResponse('Project successfully updated', entity);
+      return ApiResponseHelper.successAction('Project successfully updated', entity);
     } catch (err) {
       throw new HttpException("An error occurred while updating project", HttpStatus.BAD_REQUEST)
     }
   }
 
-  async suspend(uuid: string): Promise<Project> {
-    const project = await this.projectRepository.findOne({
-      where: {
-        id: uuid,
-        isActive: true
-      }});
-    project.isActive = false;
-
-    return await this.projectRepository.save(project);
+  async suspend(uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this._updateStatus(uuid, false, 'suspended', 'suspending');
   }
 
-  async activate(uuid: string): Promise<Project> {
-    const project = await this.projectRepository.findOne({
-      where: {
-        id: uuid,
-        isActive: false
-      }});
-    project.isActive = true;
-
-    return await this.projectRepository.save(project);
+  async activate(uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this._updateStatus(uuid, true, 'activated', 'activating');
   }
 
-  async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<ApiResponse | HttpException> {
+  private async _updateStatus(
+    uuid: string,
+    newStatus: boolean,
+    completedText: string,
+    progressingText: string,
+  ): Promise<ApiActionResponse | HttpException> {
+    const entity: Project = await this.projectRepository.findOne({
+      where: {
+        id: uuid,
+        isActive: !newStatus
+      }});
+
+    if (!entity) {
+      throw new HttpException("Invalid request", HttpStatus.BAD_REQUEST)
+    }
+
+    try {
+      entity.isActive = newStatus;
+      const result = await this.projectRepository.update(uuid, entity);
+      return ApiResponseHelper.successAction(`Project successfully ${completedText}`, result);
+    } catch (err) {
+      throw new HttpException(`An error occurred while ${progressingText} project`, HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<ApiActionResponse | HttpException> {
     const project = await this.projectRepository.findOne(projectUuid, {where: {isActive: true}});
     const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
 
@@ -114,7 +137,7 @@ export class ProjectService {
       }
       await queryRunner.commitTransaction();
 
-      return ApiResponseHelper.successActionResponse('Participants successfully added');
+      return ApiResponseHelper.successAction('Participants successfully added');
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new HttpException("An error occurred while adding participants", HttpStatus.BAD_REQUEST);

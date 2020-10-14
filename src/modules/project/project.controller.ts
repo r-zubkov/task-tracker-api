@@ -64,9 +64,15 @@ export class ProjectController {
     return this.projectService.suspend(uuid);
   }
 
+  @Post(':uuid/suspend')
+  @Role(UserRole.admin)
+  suspend(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.suspend(uuid);
+  }
+
   @Post(':uuid/activate')
   @Role(UserRole.admin)
-  unblock(@Param('uuid', ParseUUIDPipe) uuid: string) {
+  activate(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.projectService.activate(uuid);
   }
 

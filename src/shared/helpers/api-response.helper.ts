@@ -1,33 +1,57 @@
 import { InsertResult, UpdateResult } from 'typeorm';
 
-export interface ApiResponse {
+export interface ApiActionResponse {
   success: boolean;
   message?: string;
-  entityId?: string;
+  entity?: any;
 }
 
-export interface ResponseAdditionalFields {
+export interface ActionAdditionalFields {
   authToken?: string;
 }
 
+export interface ApiEntityResponse<Entity> {
+  success: boolean,
+  entity: Entity
+}
+
+export interface ApiListResponse<Entity> {
+  success: boolean,
+  entityList: Entity[]
+}
+
 export class ApiResponseHelper {
-  static successActionResponse(
+  static successAction(
     message: string,
     entity: InsertResult | UpdateResult | null = null,
-    additionalFields: ResponseAdditionalFields | null = null
-  ): ApiResponse {
-    let response: ApiResponse = {
+    additionalFields: ActionAdditionalFields | null = null
+  ): ApiActionResponse {
+    let response: ApiActionResponse = {
       success: true,
       message: message,
     }
 
     if (entity) {
-      response = {...response, entityId: entity.generatedMaps[0].id}
+      response = {...response, entity: entity.generatedMaps[0]}
     }
     if (additionalFields) {
       response = {...response, ...additionalFields}
     }
 
     return response;
+  }
+
+  static entity(entityData: any): ApiEntityResponse<any> {
+    return {
+      success: true,
+      entity: entityData
+    }
+  }
+
+  static list(listData: any[]): ApiListResponse<any> {
+    return {
+      success: true,
+      entityList: listData
+    }
   }
 }
