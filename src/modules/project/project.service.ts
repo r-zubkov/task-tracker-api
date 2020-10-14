@@ -58,7 +58,7 @@ export class ProjectService {
   async create(project: CreateProjectDto, author: User): Promise<ApiResponse | HttpException> {
     try {
       const entity = await this.projectRepository.insert({...project, owner: author});
-      return ApiResponseHelper.generateSuccessMessage('Project successfully created', entity);
+      return ApiResponseHelper.successActionResponse('Project successfully created', entity);
     } catch (err) {
       throw new HttpException("An error occurred while creating project", HttpStatus.BAD_REQUEST)
     }
@@ -67,7 +67,7 @@ export class ProjectService {
   async update(project: UpdateProjectDto, projectUuid: string): Promise<ApiResponse | HttpException> {
     try {
       const entity = await this.projectRepository.update(projectUuid, project);
-      return ApiResponseHelper.generateSuccessMessage('Project successfully updated', entity);
+      return ApiResponseHelper.successActionResponse('Project successfully updated', entity);
     } catch (err) {
       throw new HttpException("An error occurred while updating project", HttpStatus.BAD_REQUEST)
     }
@@ -114,7 +114,7 @@ export class ProjectService {
       }
       await queryRunner.commitTransaction();
 
-      return ApiResponseHelper.generateSuccessMessage('Participants successfully added');
+      return ApiResponseHelper.successActionResponse('Participants successfully added');
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new HttpException("An error occurred while adding participants", HttpStatus.BAD_REQUEST);

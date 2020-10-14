@@ -20,7 +20,7 @@ export class AuthService {
   async signUp(userDto: CreateUserDto): Promise<ApiResponse | HttpException> {
     try {
       await this.usersService.create(userDto);
-      return ApiResponseHelper.generateSuccessMessage('User successfully registered')
+      return ApiResponseHelper.successActionResponse('User successfully registered')
     } catch (err) {
       throw new HttpException("An error occurred while registering user", HttpStatus.BAD_REQUEST)
     }
@@ -30,7 +30,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(loginUserDto);
     const token = this._createToken(user);
 
-    return ApiResponseHelper.generateSuccessMessage('Success', null, { authToken: token })
+    return ApiResponseHelper.successActionResponse('Success', null, { authToken: token })
   }
 
   private _createToken({ email }: User): any {

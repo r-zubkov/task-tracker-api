@@ -11,7 +11,7 @@ export interface ResponseAdditionalFields {
 }
 
 export class ApiResponseHelper {
-  static generateSuccessMessage(
+  static successActionResponse(
     message: string,
     entity: InsertResult | UpdateResult | null = null,
     additionalFields: ResponseAdditionalFields | null = null
