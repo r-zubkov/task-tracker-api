@@ -26,8 +26,8 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Get(':uuid')
-  get(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.projectService.get(uuid);
+  get(@Param('uuid', ParseUUIDPipe) uuid: string, @Req() request) {
+    return this.projectService.get(uuid, request.user);
   }
 
   @Get()

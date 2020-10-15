@@ -24,14 +24,21 @@ export class ProjectService {
     private connection: Connection,
   ) {}
 
-  async get(uuid: string): Promise<ApiEntityResponse<Project>> {
-    const entity = await this.projectRepository.findOne({
-      where: {
-        id: uuid
-      },
-      relations: ['owner', 'participants', 'tasks', 'tasks.executor', 'tasks.checker', 'tasks.author'],
-    });
+  async get(uuid: string, user: User): Promise<ApiEntityResponse<Project> | HttpException> {
+    const query = this.projectRepository
+      .createQueryBuilder('project')
+      .where("project.id = :id", { id: uuid })
+      .leftJoinAndMapOne("project.owner", "project.owner", "owner")
 
+    // for non-admin, return only the active project, and the project where the user is a participant
+    if (!user.isAdmin) {
+      query
+        .leftJoin("project.participants", "participant")
+        .where("project.isActive = :isActive", { isActive: true })
+        .andWhere("participant.id = :userId", { userId: user.id });
+    }
+
+    const entity = await query.getOne();
     if (!entity) {
       throw new HttpException("Project not found", HttpStatus.NOT_FOUND)
     }
@@ -44,6 +51,7 @@ export class ProjectService {
       .createQueryBuilder('project')
       .leftJoinAndSelect("project.owner", "owner");
 
+    // for non-admin, return only the active projects, and the projects where the user is a participant
     if (!user.isAdmin) {
       query
         .leftJoin("project.participants", "participant")
@@ -51,7 +59,9 @@ export class ProjectService {
         .andWhere("participant.id = :userId", { userId: user.id });
     }
 
-    const result = await query.getMany();
+    const result = await query
+      .orderBy('project.created_at', 'DESC')
+      .getMany();
     return ApiResponseHelper.list(result);
   }
 

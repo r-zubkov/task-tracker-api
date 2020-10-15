@@ -1,4 +1,5 @@
 import { InsertResult, UpdateResult } from 'typeorm';
+import { classToPlain } from 'class-transformer';
 
 export interface ApiActionResponse {
   success: boolean;
@@ -44,14 +45,16 @@ export class ApiResponseHelper {
   static entity(entityData: any): ApiEntityResponse<any> {
     return {
       success: true,
-      entity: entityData
+      // manually serialize class
+      entity: classToPlain(entityData)
     }
   }
 
   static list(listData: any[]): ApiListResponse<any> {
     return {
       success: true,
-      entityList: listData
+      // manually serialize classes
+      entityList: listData.map(entity => classToPlain(entity))
     }
   }
 }
