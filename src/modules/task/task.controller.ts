@@ -11,15 +11,24 @@ export class TaskController {
 
   constructor(private readonly taskService: TaskService) {}
 
+  @Get()
+  getAll() {
+    return this.taskService.getAll();
+  }
+
   @Get(':uuid')
   get(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.taskService.get(uuid);
   }
 
-  @Get()
-  getAll() {
-    return this.taskService.getAll();
-  }
+  // TODO
+  // @Get(':projectUuid/user-tasks/:userUuid')
+  // getTasksByUser(
+  //   @Param('projectUuid', ParseUUIDPipe) projectUuid: string,
+  //   @Param('userUuid', ParseUUIDPipe) userUuid: string
+  // ) {
+  //   return this.projectService.getUserTasks(projectUuid, userUuid);
+  // }
 
   @Post()
   create(@Body(new ValidationPipe()) task: CreateTaskDto) {

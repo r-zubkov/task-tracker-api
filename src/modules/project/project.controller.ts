@@ -25,22 +25,14 @@ export class ProjectController {
 
   constructor(private readonly projectService: ProjectService) {}
 
-  @Get(':uuid')
-  get(@Param('uuid', ParseUUIDPipe) uuid: string, @Req() request) {
-    return this.projectService.get(uuid, request.user);
-  }
-
   @Get()
   getAll(@Req() request) {
     return this.projectService.getAll(request.user);
   }
 
-  @Get(':projectUuid/user-tasks/:userUuid')
-  getTasksByUser(
-    @Param('projectUuid', ParseUUIDPipe) projectUuid: string,
-    @Param('userUuid', ParseUUIDPipe) userUuid: string
-  ) {
-    return this.projectService.getUserTasks(projectUuid, userUuid);
+  @Get(':uuid')
+  get(@Param('uuid', ParseUUIDPipe) uuid: string, @Req() request) {
+    return this.projectService.get(uuid, request.user);
   }
 
   @Post()

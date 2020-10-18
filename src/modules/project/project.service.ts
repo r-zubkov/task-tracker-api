@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { Connection, Repository, SelectQueryBuilder } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
@@ -24,40 +24,27 @@ export class ProjectService {
     private connection: Connection,
   ) {}
 
-  async get(uuid: string, user: User): Promise<ApiEntityResponse<Project> | HttpException> {
-    const query = this.projectRepository
-      .createQueryBuilder('project')
-      .where("project.id = :id", { id: uuid })
-      .leftJoinAndMapOne("project.owner", "project.owner", "owner")
+  private _buildProjectQuery(uuid: string | null = null, user: User | null = null): SelectQueryBuilder<Project> {
+    const query = this.projectRepository.createQueryBuilder('project');
+
+    if (uuid) {
+      query.where("project.id = :id", { id: uuid });
+    }
 
     // for non-admin, return only the active project, and the project where the user is a participant
-    if (!user.isAdmin) {
+    if (user && !user.isAdmin) {
       query
         .leftJoin("project.participants", "participant")
-        .where("project.isActive = :isActive", { isActive: true })
+        .andWhere("project.isActive = :isActive", { isActive: true })
         .andWhere("participant.id = :userId", { userId: user.id });
     }
 
-    const entity = await query.getOne();
-    if (!entity) {
-      throw new HttpException("Project not found", HttpStatus.NOT_FOUND)
-    }
-
-    return ApiResponseHelper.entity(entity);
+    return query
+      .leftJoinAndMapOne("project.owner", "project.owner", "owner");
   }
 
   async getAll(user: User): Promise<ApiListResponse<Project>> {
-    const query = this.projectRepository
-      .createQueryBuilder('project')
-      .leftJoinAndSelect("project.owner", "owner");
-
-    // for non-admin, return only the active projects, and the projects where the user is a participant
-    if (!user.isAdmin) {
-      query
-        .leftJoin("project.participants", "participant")
-        .where("project.isActive = :isActive", { isActive: true })
-        .andWhere("participant.id = :userId", { userId: user.id });
-    }
+    const query = this._buildProjectQuery(null, user);
 
     const result = await query
       .orderBy('project.created_at', 'DESC')
@@ -65,16 +52,14 @@ export class ProjectService {
     return ApiResponseHelper.list(result);
   }
 
-  async getUserTasks(projectUuid: string, userUuid: string): Promise<Project[]> {
-    return await this.projectRepository
-      .createQueryBuilder('project')
-      .leftJoinAndSelect("project.tasks", "task")
-      .leftJoinAndSelect("task.executor", "executor")
-      .leftJoinAndSelect("task.checker", "checker")
-      .where("project.id = :id", { id: projectUuid })
-      .orWhere("executor.id = :executorId", { executorId: userUuid })
-      .orWhere("checker.id = :checkerId", { checkerId: userUuid })
-      .getMany();
+  async get(uuid: string, user: User): Promise<ApiEntityResponse<Project> | HttpException> {
+    const entity = await (this._buildProjectQuery(uuid, user)).getOne();
+
+    if (!entity) {
+      throw new HttpException("Project not found", HttpStatus.NOT_FOUND)
+    }
+
+    return ApiResponseHelper.entity(entity);
   }
 
   async create(project: CreateProjectDto, author: User): Promise<ApiActionResponse | HttpException> {
@@ -93,14 +78,6 @@ export class ProjectService {
     } catch (err) {
       throw new HttpException("An error occurred while updating project", HttpStatus.BAD_REQUEST)
     }
-  }
-
-  async suspend(uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this._updateStatus(uuid, false, 'suspended', 'suspending');
-  }
-
-  async activate(uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this._updateStatus(uuid, true, 'activated', 'activating');
   }
 
   private async _updateStatus(
@@ -128,6 +105,14 @@ export class ProjectService {
     }
   }
 
+  async suspend(uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this._updateStatus(uuid, false, 'suspended', 'suspending');
+  }
+
+  async activate(uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this._updateStatus(uuid, true, 'activated', 'activating');
+  }
+
   async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<ApiActionResponse | HttpException> {
     const project = await this.projectRepository.findOne(projectUuid, {where: {isActive: true}});
     const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
@@ -146,7 +131,6 @@ export class ProjectService {
         await queryRunner.manager.save(participant);
       }
       await queryRunner.commitTransaction();
-
       return ApiResponseHelper.successAction('Participants successfully added');
     } catch (err) {
       await queryRunner.rollbackTransaction();

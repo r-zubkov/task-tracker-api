@@ -31,6 +31,19 @@ export class TaskService {
       { relations: ['project', 'executor', 'checker', 'author'], });
   }
 
+  // TODO
+  // async getUserTasks(projectUuid: string, userUuid: string): Promise<Project[]> {
+  //   return await this.projectRepository
+  //     .createQueryBuilder('project')
+  //     .leftJoinAndSelect("project.tasks", "task")
+  //     .leftJoinAndSelect("task.executor", "executor")
+  //     .leftJoinAndSelect("task.checker", "checker")
+  //     .where("project.id = :id", { id: projectUuid })
+  //     .orWhere("executor.id = :executorId", { executorId: userUuid })
+  //     .orWhere("checker.id = :checkerId", { checkerId: userUuid })
+  //     .getMany();
+  // }
+
   async getUserTrackedTime(userUuid: string): Promise<Task[]> {
     return await this.taskRepository
       .createQueryBuilder('task')
