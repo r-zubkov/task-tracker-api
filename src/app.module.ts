@@ -11,6 +11,7 @@ import { Project } from './modules/project/project.entity';
 import { Task } from './modules/task/task.entity';
 import { TaskComment } from './modules/task-comment/task-comment.entity';
 import { TaskTime } from './modules/task-time/task-time.entity';
+import { ParticipantModule } from './modules/participant/participant.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { TaskTime } from './modules/task-time/task-time.entity';
     }),
     AuthModule,
     ProjectModule,
+    ParticipantModule,
     TaskModule,
     TaskCommentModule,
     TaskTimeModule
