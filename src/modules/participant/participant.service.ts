@@ -1,4 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ParticipantService {}
+export class ParticipantService {
+
+  getAll() {
+    return []
+  }
+
+}

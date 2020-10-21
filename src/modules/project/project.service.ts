@@ -62,6 +62,10 @@ export class ProjectService {
     return ApiResponseHelper.entity(entity);
   }
 
+  async findEntity(uuid: string, user: User): Promise<Project> {
+    return await (this._buildProjectQuery(uuid, user)).getOne();
+  }
+
   async create(project: CreateProjectDto, author: User): Promise<ApiActionResponse | HttpException> {
     try {
       const entity = await this.projectRepository.insert({...project, owner: author});
