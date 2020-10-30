@@ -4,6 +4,7 @@ import { Task } from '../task/task.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
 import { TaskTime } from '../task-time/task-time.entity';
 import { ProjectParticipant } from '../participant/project-participant.entity';
+import { Exclude } from 'class-transformer';
 
 export enum UserRole {
   user = 'user',
@@ -22,7 +23,8 @@ export class User {
   @Column({length: 32, unique: true, nullable: false})
   email: string;
 
-  @Column({length: 100, nullable: false, select: false})
+  @Column({length: 100, nullable: false})
+  @Exclude()
   password: string;
 
   @Column('enum', {enum: [UserRole.user, UserRole.admin], default: UserRole.user})
