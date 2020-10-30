@@ -1,9 +1,9 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project/project.entity';
 import { Task } from '../task/task.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
 import { TaskTime } from '../task-time/task-time.entity';
-import { Exclude } from 'class-transformer';
+import { ProjectParticipant } from '../participant/project-participant.entity';
 
 export enum UserRole {
   user = 'user',
@@ -22,8 +22,7 @@ export class User {
   @Column({length: 32, unique: true, nullable: false})
   email: string;
 
-  @Column({length: 100, nullable: false})
-  @Exclude()
+  @Column({length: 100, nullable: false, select: false})
   password: string;
 
   @Column('enum', {enum: [UserRole.user, UserRole.admin], default: UserRole.user})
@@ -56,9 +55,8 @@ export class User {
   @OneToMany(() => Project, projectOwner => projectOwner.owner)
   projectOwner: Project[];
 
-  @ManyToMany(() => Project, project => project.participants)
-  @JoinTable()
-  projectParticipant: Project[];
+  @OneToMany(() => ProjectParticipant, projectParticipant => projectParticipant.user)
+  projectParticipants: ProjectParticipant[];
 
   @OneToMany(() => Task, taskAuthor => taskAuthor.author)
   taskAuthor: Task[];

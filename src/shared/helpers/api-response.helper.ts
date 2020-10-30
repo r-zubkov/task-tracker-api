@@ -33,7 +33,7 @@ export class ApiResponseHelper {
     }
 
     if (entity) {
-      response = {...response, entity: entity.generatedMaps[0]}
+      response = {...response, entity: classToPlain(entity.generatedMaps[0])}
     }
     if (additionalFields) {
       response = {...response, ...additionalFields}

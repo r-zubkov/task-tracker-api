@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Task } from '../task/task.entity';
+import { ProjectParticipant } from '../participant/project-participant.entity';
 
 @Entity()
 export class Project {
@@ -24,10 +25,11 @@ export class Project {
   createdAt: string;
 
   @ManyToOne(() => User, user => user.projectOwner, {nullable: false})
+  @JoinColumn({ name: 'owner_id' })
   owner: User;
 
-  @ManyToMany(() => User, user => user.projectParticipant, {cascade: true})
-  participants: User[];
+  @OneToMany(() => ProjectParticipant, projectParticipant => projectParticipant.user)
+  projectParticipants: ProjectParticipant[];
 
   @OneToMany(() => Task, task => task.project, {nullable: false})
   tasks: Task[];

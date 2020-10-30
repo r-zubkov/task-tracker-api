@@ -63,7 +63,7 @@ export class UserService {
   async findUsersByIds(uuids: string[]): Promise<User[]> {
     return await this.usersRepository.findByIds(uuids, {
       where: { isActive: true },
-      relations: ['projectParticipant']
+      relations: ['projectParticipants']
     });
   }
 
@@ -71,7 +71,7 @@ export class UserService {
     const user = await this.usersRepository.findOne({
       where: { email: email, isActive: true }
     });
-    const errMessage = 'Invalid password or email.';
+    const errMessage = 'Invalid password or email';
 
     if (!user) {
       throw new HttpException(errMessage, HttpStatus.UNAUTHORIZED);

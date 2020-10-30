@@ -12,7 +12,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { ProjectParticipantsDto } from './dto/project-participants.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
@@ -66,14 +65,5 @@ export class ProjectController {
   @Role(UserRole.admin)
   activate(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.projectService.activate(uuid);
-  }
-
-  @Post(':uuid/add-participants')
-  @Role(UserRole.admin)
-  addParticipant(
-    @Body(new ValidationPipe()) projectParticipants: ProjectParticipantsDto,
-    @Param('uuid', ParseUUIDPipe) uuid: string
-  ) {
-    return this.projectService.addParticipant(projectParticipants, uuid);
   }
 }

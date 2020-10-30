@@ -1,10 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from '../user/user.entity';
-import { UserService } from '../user/user.service';
-import { ProjectParticipantsDto } from './dto/project-participants.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import {
@@ -19,9 +17,7 @@ export class ProjectService {
 
   constructor(
     @InjectRepository(Project)
-    private projectRepository: Repository<Project>,
-    private userService: UserService,
-    private connection: Connection,
+    private projectRepository: Repository<Project>
   ) {}
 
   private _buildProjectQuery(uuid: string | null = null, user: User | null = null): SelectQueryBuilder<Project> {
@@ -34,9 +30,9 @@ export class ProjectService {
     // for non-admin, return only the active project, and the project where the user is a participant
     if (user && !user.isAdmin) {
       query
-        .leftJoin("project.participants", "participant")
+        .leftJoin("project.projectParticipants", "projectParticipant")
         .andWhere("project.isActive = :isActive", { isActive: true })
-        .andWhere("participant.id = :userId", { userId: user.id });
+        .andWhere("projectParticipant.userId = :userId", { userId: user.id });
     }
 
     return query
@@ -115,32 +111,5 @@ export class ProjectService {
 
   async activate(uuid: string): Promise<ApiActionResponse | HttpException> {
     return this._updateStatus(uuid, true, 'activated', 'activating');
-  }
-
-  async addParticipant(projectParticipants: ProjectParticipantsDto, projectUuid: string): Promise<ApiActionResponse | HttpException> {
-    const project = await this.projectRepository.findOne(projectUuid, {where: {isActive: true}});
-    const participants = await this.userService.findUsersByIds(projectParticipants.userIds);
-
-    if (!project || participants.length === 0) {
-      throw new HttpException("Invalid request", HttpStatus.BAD_REQUEST);
-    }
-
-    const queryRunner = this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      for (const participant of participants) {
-        participant.projectParticipant.push(project);
-        await queryRunner.manager.save(participant);
-      }
-      await queryRunner.commitTransaction();
-      return ApiResponseHelper.successAction('Participants successfully added');
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-      throw new HttpException("An error occurred while adding participants", HttpStatus.BAD_REQUEST);
-    } finally {
-      await queryRunner.release();
-    }
   }
 }
