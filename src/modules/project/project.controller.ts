@@ -12,8 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { CreateUpdateProjectDto } from './dto/create-update-project.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { UserRole } from '../user/user.entity';
 import { Role } from '../../core/decorators/role.decorator';
@@ -36,14 +35,14 @@ export class ProjectController {
 
   @Post()
   @Role(UserRole.admin)
-  create(@Body(new ValidationPipe()) project: CreateProjectDto, @Req() request) {
+  create(@Body(new ValidationPipe()) project: CreateUpdateProjectDto, @Req() request) {
     return this.projectService.create(project, request.user);
   }
 
   @Put(':uuid')
   @Role(UserRole.admin)
   update(
-    @Body(new ValidationPipe()) project: UpdateProjectDto,
+    @Body(new ValidationPipe()) project: CreateUpdateProjectDto,
     @Param('uuid', ParseUUIDPipe) uuid: string
   ) {
     return this.projectService.update(project, uuid);

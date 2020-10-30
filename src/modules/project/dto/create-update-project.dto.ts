@@ -1,7 +1,7 @@
 import { IsOptional, IsString, Length } from 'class-validator';
 import { Expose } from 'class-transformer';
 
-export class UpdateProjectDto {
+export class CreateUpdateProjectDto {
   @IsString()
   @Length(1, 50)
   @Expose()

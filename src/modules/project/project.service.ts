@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from '../user/user.entity';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { CreateUpdateProjectDto } from './dto/create-update-project.dto';
 import {
   ApiActionResponse,
   ApiEntityResponse,
@@ -62,7 +61,7 @@ export class ProjectService {
     return await (this._buildProjectQuery(uuid, user)).getOne();
   }
 
-  async create(project: CreateProjectDto, author: User): Promise<ApiActionResponse | HttpException> {
+  async create(project: CreateUpdateProjectDto, author: User): Promise<ApiActionResponse | HttpException> {
     try {
       const entity = await this.projectRepository.insert({...project, owner: author});
       return ApiResponseHelper.successAction('Project successfully created', entity);
@@ -71,7 +70,7 @@ export class ProjectService {
     }
   }
 
-  async update(project: UpdateProjectDto, projectUuid: string): Promise<ApiActionResponse | HttpException> {
+  async update(project: CreateUpdateProjectDto, projectUuid: string): Promise<ApiActionResponse | HttpException> {
     try {
       const entity = await this.projectRepository.update(projectUuid, project);
       return ApiResponseHelper.successAction('Project successfully updated', entity);
