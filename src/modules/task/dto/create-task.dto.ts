@@ -1,7 +1,6 @@
 import { IsEnum, IsInt, IsOptional, IsPositive, IsString, IsUUID, Length, Max, Min } from 'class-validator';
 import { Expose } from 'class-transformer';
 import { PriorityType } from '../task.entity';
-import { Project } from '../../project/project.entity';
 import { User } from '../../user/user.entity';
 
 export class CreateTaskDto {
@@ -27,16 +26,10 @@ export class CreateTaskDto {
   readonly description: string;
 
   @IsUUID()
-  readonly project: Project;
-
-  @IsUUID()
   readonly executor: User;
 
   @IsUUID()
   readonly checker: User;
-
-  @IsUUID()
-  readonly author: User;
 
   @IsString()
   @Length(19, 19)

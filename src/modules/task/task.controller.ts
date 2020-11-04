@@ -1,12 +1,25 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  UseGuards,
+  UseInterceptors,
+  ValidationPipe,
+} from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
+import { ProjectInterceptor } from '../../core/interceptors/project.interceptor';
 
-@Controller('task')
+@Controller('project/:projectId/task')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(ProjectInterceptor)
 export class TaskController {
 
   constructor(private readonly taskService: TaskService) {}
