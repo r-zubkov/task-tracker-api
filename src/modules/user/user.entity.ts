@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Project } from '../project/project.entity';
 import { Task } from '../task/task.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
@@ -48,11 +48,11 @@ export class User {
   @Column({length: 500, nullable: true})
   description: string;
 
-  @Column('datetime', {name: 'updated_at', nullable: true})
-  updatedAt: string;
+  @CreateDateColumn()
+  created: Date;
 
-  @Column('datetime', {name: 'created_at', nullable: false})
-  createdAt: string;
+  @UpdateDateColumn()
+  updated: Date;
 
   @OneToMany(() => Project, projectOwner => projectOwner.owner)
   projectOwner: Project[];

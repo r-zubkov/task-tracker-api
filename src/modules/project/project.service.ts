@@ -42,7 +42,7 @@ export class ProjectService {
     const query = this._buildProjectQuery(null, user);
 
     const result = await query
-      .orderBy('project.created_at', 'DESC')
+      .orderBy('project.created', 'DESC')
       .getMany();
     return ApiResponseHelper.list(result);
   }
