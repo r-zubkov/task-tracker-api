@@ -15,7 +15,7 @@ import { Role } from '../../core/decorators/role.decorator';
 import { UserRole } from '../user/user.entity';
 import { ProjectParticipantsDto } from './dto/project-participants.dto';
 
-@Controller('project/:projectId/participant')
+@Controller('projects/:projectId/participants')
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(ProjectInterceptor)
 export class ParticipantController {

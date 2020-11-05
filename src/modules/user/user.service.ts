@@ -91,7 +91,7 @@ export class UserService {
     });
   }
 
-  async comparePasswords(userPassword, currentPassword) {
+  async comparePasswords(userPassword, currentPassword): Promise<boolean> {
     return await bcrypt.compare(currentPassword, userPassword);
   };
 }

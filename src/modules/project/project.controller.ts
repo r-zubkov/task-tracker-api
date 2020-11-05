@@ -1,12 +1,11 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
-  Put,
   Req,
   UseGuards,
   ValidationPipe,
@@ -17,7 +16,7 @@ import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { UserRole } from '../user/user.entity';
 import { Role } from '../../core/decorators/role.decorator';
 
-@Controller('project')
+@Controller('projects')
 @UseGuards(JwtAuthGuard)
 export class ProjectController {
 
@@ -39,7 +38,7 @@ export class ProjectController {
     return this.projectService.create(project, request.user);
   }
 
-  @Put(':uuid')
+  @Patch(':uuid')
   @Role(UserRole.admin)
   update(
     @Body(new ValidationPipe()) project: CreateUpdateProjectDto,
@@ -48,21 +47,15 @@ export class ProjectController {
     return this.projectService.update(project, uuid);
   }
 
-  @Delete(':uuid')
+  @Post(':uuid/activate')
   @Role(UserRole.admin)
-  archive(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.projectService.suspend(uuid);
+  activate(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.activate(uuid);
   }
 
   @Post(':uuid/suspend')
   @Role(UserRole.admin)
   suspend(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.projectService.suspend(uuid);
-  }
-
-  @Post(':uuid/activate')
-  @Role(UserRole.admin)
-  activate(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.projectService.activate(uuid);
   }
 }

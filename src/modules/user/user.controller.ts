@@ -18,7 +18,7 @@ import { Role } from '../../core/decorators/role.decorator';
 import { UserRole } from './user.entity';
 import { ProfileUpdate } from '../../core/decorators/profile-update.decorator';
 
-@Controller('user')
+@Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(
