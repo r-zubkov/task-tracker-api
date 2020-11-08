@@ -6,4 +6,6 @@ export interface CrudInterface<Entity> {
   get?(...args): Promise<ApiEntityResponse<Entity> | HttpException>;
   create?(...args): Promise<ApiActionResponse | HttpException>;
   update?(...args): Promise<ApiActionResponse | HttpException>;
+  delete?(...args): Promise<ApiActionResponse | HttpException>;
+  restore?(...args): Promise<ApiActionResponse | HttpException>;
 }

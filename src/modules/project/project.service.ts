@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Project } from './project.entity';
@@ -9,7 +9,6 @@ import {
   ApiEntityResponse,
   ApiListResponse,
 } from '../../shared/helpers/api-response.helper';
-import { ApiResponseHelper } from '../../shared/helpers/api-response.helper';
 import { CrudService } from '../../core/services/crud.service';
 import { CrudInterface } from '../../core/interfaces/crud.interface';
 
@@ -64,36 +63,11 @@ export class ProjectService extends CrudService<Project> implements CrudInterfac
     return this.updateEntity(project, projectUUID);
   }
 
-  private async _updateStatus(
-    uuid: string,
-    newStatus: boolean,
-    completedText: string,
-    progressingText: string,
-  ): Promise<ApiActionResponse | HttpException> {
-    const entity: Project = await this.repository.findOne({
-      where: {
-        id: uuid,
-        isActive: !newStatus
-      }});
-
-    if (!entity) {
-      throw new HttpException("Invalid request", HttpStatus.BAD_REQUEST)
-    }
-
-    try {
-      entity.isActive = newStatus;
-      const result = await this.repository.update(uuid, entity);
-      return ApiResponseHelper.successAction(`Project successfully ${completedText}`, result);
-    } catch (err) {
-      throw new HttpException(`An error occurred while ${progressingText} project`, HttpStatus.BAD_REQUEST)
-    }
+  async delete(uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateStatus(uuid, false, 'Project', 'suspended', 'suspending');
   }
 
-  async suspend(uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this._updateStatus(uuid, false, 'suspended', 'suspending');
-  }
-
-  async activate(uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this._updateStatus(uuid, true, 'activated', 'activating');
+  async restore(uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateStatus(uuid, true, 'Project',  'activated', 'activating');
   }
 }

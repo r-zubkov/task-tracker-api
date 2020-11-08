@@ -54,4 +54,30 @@ export abstract class CrudService<Entity> {
       throw new HttpException("An error occurred while updating entity", HttpStatus.BAD_REQUEST)
     }
   }
+
+  protected async updateStatus(
+    uuid: string,
+    newStatus: boolean,
+    entityName: string,
+    completedText: string,
+    progressingText: string,
+  ): Promise<ApiActionResponse | HttpException> {
+    const entity = await this.repository.findOne({
+      where: {
+        id: uuid,
+        isActive: !newStatus
+      }});
+
+    if (!entity) {
+      throw new HttpException("Invalid request", HttpStatus.BAD_REQUEST)
+    }
+
+    try {
+      entity['isActive'] = newStatus;
+      const result = await this.repository.update(uuid, entity);
+      return ApiResponseHelper.successAction(`${entityName} successfully ${completedText}`, result);
+    } catch (err) {
+      throw new HttpException(`An error occurred while ${progressingText} ${entityName.toLowerCase()}`, HttpStatus.BAD_REQUEST)
+    }
+  }
 }

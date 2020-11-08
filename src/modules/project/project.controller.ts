@@ -47,15 +47,15 @@ export class ProjectController {
     return this.projectService.update(project, uuid);
   }
 
-  @Post(':uuid/activate')
-  @Role(UserRole.admin)
-  activate(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.projectService.activate(uuid);
-  }
-
   @Post(':uuid/suspend')
   @Role(UserRole.admin)
   suspend(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.projectService.suspend(uuid);
+    return this.projectService.delete(uuid);
+  }
+
+  @Post(':uuid/activate')
+  @Role(UserRole.admin)
+  activate(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.restore(uuid);
   }
 }

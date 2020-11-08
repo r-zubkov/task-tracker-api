@@ -59,28 +59,12 @@ export class UserService extends CrudService<User> implements CrudInterface<User
     return this.updateEntity(user, userUUID);
   }
 
-  async block(uuid: string): Promise<User> {
-    const user = await this.repository.findOne({
-      where: {
-        id: uuid,
-        isActive: true
-      }
-    });
-    user.isActive = false;
-
-    return await this.repository.save(user)
+  async delete(uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateStatus(uuid, false, 'User', 'blocked', 'blocking')
   }
 
-  async unblock(uuid: string): Promise<User> {
-    const user = await this.repository.findOne({
-      where: {
-        id: uuid,
-        isActive: false
-      }
-    });
-    user.isActive = true;
-
-    return await this.repository.save(user)
+  async restore(uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateStatus(uuid, true, 'User', 'activated', 'activating')
   }
 
   async findUsersByIds(uuids: string[]): Promise<User[]> {
