@@ -1,7 +1,12 @@
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { User } from '../../modules/user/user.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ApiEntityResponse, ApiListResponse, ApiResponseHelper } from '../../shared/helpers/api-response.helper';
+import {
+  ApiActionResponse,
+  ApiEntityResponse,
+  ApiListResponse,
+  ApiResponseHelper,
+} from '../../shared/helpers/api-response.helper';
 
 export abstract class CrudService<Entity> {
 
@@ -12,11 +17,11 @@ export abstract class CrudService<Entity> {
     protected repository: Repository<Entity>
   ) {}
 
-  async getEntity(user: User, uuid: string): Promise<ApiEntityResponse<Entity> | HttpException> {
+  async getEntity(user: User, uuid: string, notFoundMsg?: string): Promise<ApiEntityResponse<Entity> | HttpException> {
     const entity = await (this._buildQuery(user, uuid)).getOne();
 
     if (!entity) {
-      throw new HttpException(`Entity not found`, HttpStatus.NOT_FOUND)
+      throw new HttpException(notFoundMsg || 'Entity not found', HttpStatus.NOT_FOUND)
     }
 
     return ApiResponseHelper.entity(entity);
@@ -29,5 +34,14 @@ export abstract class CrudService<Entity> {
       .orderBy(`${this.entityAlias}.created`, 'DESC')
       .getMany();
     return ApiResponseHelper.list(result);
+  }
+
+  async createEntity(entityData: any): Promise<ApiActionResponse | HttpException> {
+    try {
+      const entity = await this.repository.insert(entityData);
+      return ApiResponseHelper.successAction('Entity successfully created', entity);
+    } catch (err) {
+      throw new HttpException("An error occurred while creating entity", HttpStatus.BAD_REQUEST)
+    }
   }
 }

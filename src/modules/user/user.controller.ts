@@ -5,8 +5,8 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
-  Put,
   Req,
   UseGuards,
   ValidationPipe,
@@ -43,7 +43,7 @@ export class UserController {
     return this.taskService.getUserTrackedTime(uuid);
   }
 
-  @Put(':userUUID')
+  @Patch(':userUUID')
   @ProfileUpdate()
   update(
     @Body(new ValidationPipe()) user: UpdateUserDto,
