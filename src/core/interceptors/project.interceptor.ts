@@ -29,7 +29,7 @@ export class ProjectInterceptor implements NestInterceptor {
     return from((new ParseUUIDPipe()).transform(projectId, { type: 'param' }))
       .pipe(
         catchError(() => {
-          throw new HttpException("Invalid ID", HttpStatus.BAD_REQUEST);
+          throw new HttpException("Invalid UUID", HttpStatus.BAD_REQUEST);
         }),
         switchMap(() => {
           const projectEntity = this.projectService.findEntity(projectId, user);

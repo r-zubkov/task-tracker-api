@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -26,15 +27,15 @@ export class UserController {
     private readonly taskService: TaskService
   ) {}
 
-  @Get(':userUuid')
-  get(@Param('userUuid', ParseUUIDPipe) uuid: string) {
-    return this.userService.get(uuid);
-  }
-
   @Get()
   @Role(UserRole.admin)
-  getAll() {
-    return this.userService.getAll();
+  getAll(@Req() request) {
+    return this.userService.getAll(request.user);
+  }
+
+  @Get(':uuid')
+  get(@Req() request, @Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.userService.get(request.user, uuid);
   }
 
   @Get(':userUuid/tracked-time')
@@ -42,24 +43,24 @@ export class UserController {
     return this.taskService.getUserTrackedTime(uuid);
   }
 
-  @Put(':userUuid')
+  @Put(':userUUID')
   @ProfileUpdate()
   update(
     @Body(new ValidationPipe()) user: UpdateUserDto,
-    @Param('userUuid', ParseUUIDPipe) uuid: string
+    @Param('userUUID', ParseUUIDPipe) uuid: string
   ) {
     return this.userService.update(user, uuid);
   }
 
-  @Delete(':userUuid')
+  @Delete(':uuid')
   @Role(UserRole.admin)
-  block(@Param('userUuid', ParseUUIDPipe) uuid: string) {
+  block(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.userService.block(uuid);
   }
 
-  @Post(':userUuid/unblock')
+  @Post(':uuid/unblock')
   @Role(UserRole.admin)
-  unblock(@Param('userUuid', ParseUUIDPipe) uuid: string) {
+  unblock(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.userService.unblock(uuid);
   }
 }

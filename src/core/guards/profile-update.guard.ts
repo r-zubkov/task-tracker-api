@@ -4,13 +4,13 @@ import { User } from '../../modules/user/user.entity';
 @Injectable()
 export class ProfileUpdateGuard implements CanActivate {
 
-  constructor(private userUuid: string = null) {}
+  constructor(private userUUID: string = null) {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const user: User = request.user;
-    const userUuid: string = this.userUuid || request.params.userUuid;
+    const userUUID: string = this.userUUID || request.params.userUuid;
 
-    return user.isAdmin || user.id === userUuid;
+    return user.isAdmin || user.id === userUUID;
   }
 }

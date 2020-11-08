@@ -45,7 +45,6 @@ export class ApiResponseHelper {
   static entity(entityData: any): ApiEntityResponse<any> {
     return {
       success: true,
-      // manually serialize class
       entity: classToPlain(entityData)
     }
   }
@@ -53,7 +52,6 @@ export class ApiResponseHelper {
   static list(listData: any[]): ApiListResponse<any> {
     return {
       success: true,
-      // manually serialize classes
       entityList: listData.map(entity => classToPlain(entity))
     }
   }

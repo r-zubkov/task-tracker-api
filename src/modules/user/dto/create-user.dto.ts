@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
+import { IsDate, IsEmail, IsOptional, IsString, Length } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class CreateUserDto {
@@ -30,7 +30,7 @@ export class CreateUserDto {
   readonly lastName: string;
 
   @IsString()
-  @Length(10, 10)
+  @IsDate()
   @Expose()
   @IsOptional()
   readonly birthDate: string;

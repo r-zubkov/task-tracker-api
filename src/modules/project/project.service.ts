@@ -27,7 +27,7 @@ export class ProjectService {
     }
 
     // for non-admin, return only the active project, and the project where the user is a participant
-    if (user && !user.isAdmin) {
+    if (!user.isAdmin) {
       query
         .leftJoin("project.projectParticipants", "projectParticipant")
         .andWhere("project.isActive = :isActive", { isActive: true })
@@ -47,7 +47,7 @@ export class ProjectService {
     return ApiResponseHelper.list(result);
   }
 
-  async get(uuid: string, user: User): Promise<ApiEntityResponse<Project> | HttpException> {
+  async get(user: User, uuid: string): Promise<ApiEntityResponse<Project> | HttpException> {
     const entity = await (this._buildProjectQuery(uuid, user)).getOne();
 
     if (!entity) {

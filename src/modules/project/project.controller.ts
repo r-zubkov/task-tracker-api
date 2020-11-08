@@ -28,8 +28,8 @@ export class ProjectController {
   }
 
   @Get(':uuid')
-  get(@Param('uuid', ParseUUIDPipe) uuid: string, @Req() request) {
-    return this.projectService.get(uuid, request.user);
+  get(@Req() request, @Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.get(request.user, uuid);
   }
 
   @Post()

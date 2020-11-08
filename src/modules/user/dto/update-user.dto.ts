@@ -1,4 +1,4 @@
-import { IsOptional, IsString, Length } from 'class-validator';
+import { IsDate, IsOptional, IsString, Length } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class UpdateUserDto {
@@ -19,7 +19,7 @@ export class UpdateUserDto {
   readonly lastName: string;
 
   @IsString()
-  @Length(10, 10)
+  @IsDate()
   @Expose()
   @IsOptional()
   readonly birthDate: string;
