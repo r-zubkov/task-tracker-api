@@ -22,7 +22,7 @@ export abstract class CrudService<Entity> {
     return ApiResponseHelper.entity(entity);
   }
 
-  async getEntityList(user: User): Promise<ApiListResponse<Entity[]>> {
+  async getEntityList(user: User): Promise<ApiListResponse<Entity>> {
     const query = this._buildQuery(user);
 
     const result = await query

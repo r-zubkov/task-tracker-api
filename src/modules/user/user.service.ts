@@ -8,9 +8,10 @@ import { LoginUserDto } from './dto/login-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { ApiEntityResponse, ApiListResponse } from '../../shared/helpers/api-response.helper';
 import { CrudService } from '../../core/services/crud.service';
+import { CrudInterface } from '../../core/interfaces/crud.interface';
 
 @Injectable()
-export class UserService extends CrudService<User> {
+export class UserService extends CrudService<User> implements CrudInterface<User> {
 
   protected entityAlias = 'user';
 
@@ -42,7 +43,7 @@ export class UserService extends CrudService<User> {
     return query;
   }
 
-  async getAll(user: User): Promise<ApiListResponse<User[]>> {
+  async getAll(user: User): Promise<ApiListResponse<User>> {
     return this.getEntityList(user);
   }
 
