@@ -1,8 +1,9 @@
-import { ApiEntityResponse, ApiListResponse } from '../../shared/helpers/api-response.helper';
-import { User } from '../../modules/user/user.entity';
+import { ApiActionResponse, ApiEntityResponse, ApiListResponse } from '../../shared/helpers/api-response.helper';
 import { HttpException } from '@nestjs/common';
 
 export interface CrudInterface<Entity> {
-  getAll?(user: User): Promise<ApiListResponse<Entity>>;
-  get?(user: User, uuid: string): Promise<ApiEntityResponse<Entity> | HttpException>;
+  getAll?(...args): Promise<ApiListResponse<Entity>>;
+  get?(...args): Promise<ApiEntityResponse<Entity> | HttpException>;
+  create?(...args): Promise<ApiActionResponse | HttpException>;
+  update?(...args): Promise<ApiActionResponse | HttpException>;
 }

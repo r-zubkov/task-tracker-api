@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { InsertResult, Repository, SelectQueryBuilder, UpdateResult } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import * as bcrypt from 'bcryptjs';
-import { ApiEntityResponse, ApiListResponse } from '../../shared/helpers/api-response.helper';
+import { ApiActionResponse, ApiEntityResponse, ApiListResponse } from '../../shared/helpers/api-response.helper';
 import { CrudService } from '../../core/services/crud.service';
 import { CrudInterface } from '../../core/interfaces/crud.interface';
 
@@ -51,12 +51,12 @@ export class UserService extends CrudService<User> implements CrudInterface<User
     return this.getEntity(user, uuid);
   }
 
-  async create(user: CreateUserDto): Promise<InsertResult> {
-    return await this.repository.insert(user)
+  async create(user: CreateUserDto): Promise<ApiActionResponse | HttpException> {
+    return this.createEntity(user)
   }
 
-  async update(user: UpdateUserDto, userUuid: string): Promise<UpdateResult> {
-    return await this.repository.update(userUuid, user)
+  async update(user: UpdateUserDto, userUUID: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateEntity(user, userUUID);
   }
 
   async block(uuid: string): Promise<User> {

@@ -25,7 +25,7 @@ export class ProjectService extends CrudService<Project> implements CrudInterfac
     super(repository);
   }
 
-  protected _buildQuery(user: User, uuid: string | null): SelectQueryBuilder<Project> {
+  protected _buildQuery(user: User, uuid?: string): SelectQueryBuilder<Project> {
     const query = this.repository.createQueryBuilder(this.entityAlias);
 
     if (uuid) {
@@ -52,26 +52,16 @@ export class ProjectService extends CrudService<Project> implements CrudInterfac
     return this.getEntity(user, uuid);
   }
 
-  async findEntity(uuid: string, user: User): Promise<Project> {
+  async findEntity(user: User, uuid: string): Promise<Project> {
     return await (this._buildQuery(user, uuid)).getOne();
   }
 
   async create(project: CreateUpdateProjectDto, author: User): Promise<ApiActionResponse | HttpException> {
-    try {
-      const entity = await this.repository.insert({...project, owner: author});
-      return ApiResponseHelper.successAction('Project successfully created', entity);
-    } catch (err) {
-      throw new HttpException("An error occurred while creating project", HttpStatus.BAD_REQUEST)
-    }
+    return this.createEntity({...project, owner: author});
   }
 
-  async update(project: CreateUpdateProjectDto, projectUuid: string): Promise<ApiActionResponse | HttpException> {
-    try {
-      const entity = await this.repository.update(projectUuid, project);
-      return ApiResponseHelper.successAction('Project successfully updated', entity);
-    } catch (err) {
-      throw new HttpException("An error occurred while updating project", HttpStatus.BAD_REQUEST)
-    }
+  async update(project: CreateUpdateProjectDto, projectUUID: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateEntity(project, projectUUID);
   }
 
   private async _updateStatus(
