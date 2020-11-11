@@ -4,20 +4,19 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
-  Put,
+  Req,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
-import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { CreateUpdateTaskDto } from './dto/create-update-task.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { ProjectInterceptor } from '../../core/interceptors/project.interceptor';
 
-@Controller('project/:projectId/task')
+@Controller('projects/:projectId/tasks')
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(ProjectInterceptor)
 export class TaskController {
@@ -25,13 +24,13 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Get()
-  getAll() {
-    return this.taskService.getAll();
+  getAll(@Req() request) {
+    return this.taskService.getAll(request.user);
   }
 
   @Get(':uuid')
-  get(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.taskService.get(uuid);
+  get(@Req() request, @Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.taskService.get(request.user, uuid);
   }
 
   // TODO
@@ -44,23 +43,24 @@ export class TaskController {
   // }
 
   @Post()
-  create(@Body(new ValidationPipe()) task: CreateTaskDto) {
-    return this.taskService.create(task);
+  create(@Req() request, @Body(new ValidationPipe()) task: CreateUpdateTaskDto) {
+    return this.taskService.create(request.user, request.project, task);
   }
 
-  @Put(':uuid')
+  @Patch(':uuid')
   update(
-    @Body(new ValidationPipe()) task: UpdateTaskDto,
+    @Req() request,
+    @Body(new ValidationPipe()) task: CreateUpdateTaskDto,
     @Param('uuid', ParseUUIDPipe) uuid: string
   ) {
-    return this.taskService.update(task, uuid);
+    return this.taskService.update(request.user, task, uuid);
   }
 
-  @Post(':uuid/update-status')
-  updateStatus(
-    @Body(new ValidationPipe()) status: UpdateTaskStatusDto,
-    @Param('uuid', ParseUUIDPipe) uuid: string
-  ) {
-    return this.taskService.updateStatus(status, uuid);
-  }
+  // @Post(':uuid/update-status')
+  // updateStatus(
+  //   @Body(new ValidationPipe()) status: UpdateTaskStatusDto,
+  //   @Param('uuid', ParseUUIDPipe) uuid: string
+  // ) {
+  //   return this.taskService.updateStatus(status, uuid);
+  // }
 }

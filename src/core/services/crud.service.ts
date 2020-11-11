@@ -10,7 +10,7 @@ import {
 
 export abstract class CrudService<Entity> {
 
-  protected abstract entityAlias: string;
+  protected abstract readonly entityAlias: string;
 
   protected constructor(
     protected repository: Repository<Entity>

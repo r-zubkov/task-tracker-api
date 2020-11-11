@@ -1,9 +1,9 @@
-import { IsEnum, IsInt, IsOptional, IsPositive, IsString, IsUUID, Length, Max, Min } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID, Length } from 'class-validator';
 import { Expose } from 'class-transformer';
 import { PriorityType } from '../task.entity';
 import { User } from '../../user/user.entity';
 
-export class UpdateTaskDto {
+export class CreateUpdateTaskDto {
   @IsString()
   @Length(1, 50)
   @Expose()
@@ -11,13 +11,6 @@ export class UpdateTaskDto {
 
   @IsEnum(PriorityType)
   readonly priority: PriorityType;
-
-  @IsInt()
-  @IsPositive()
-  @Min(1)
-  @Max(4294967295)
-  @Expose()
-  readonly estimatedTime: number;
 
   @IsString()
   @Length(1, 5000)

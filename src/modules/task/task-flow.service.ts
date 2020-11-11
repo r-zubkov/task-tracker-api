@@ -3,7 +3,7 @@ import { TaskStatusType } from './task.entity';
 
 @Injectable()
 export class TaskFlowService {
-  getNextTaskStatus = (currentTaskStatus: string): string[] => {
+  private readonly getNextTaskStatus = (currentTaskStatus: string): string[] => {
     switch (currentTaskStatus) {
       case 'new': {
         return [
@@ -41,6 +41,10 @@ export class TaskFlowService {
       }
 
       case 'rejected': {
+        return [];
+      }
+
+      default: {
         return [];
       }
     }

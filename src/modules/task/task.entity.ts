@@ -1,4 +1,13 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { User } from '../user/user.entity';
 import { TaskComment } from '../task-comment/task-comment.entity';
 import { TaskTime } from '../task-time/task-time.entity';
@@ -41,9 +50,6 @@ export class Task {
   ], default: TaskStatusType.new})
   status: TaskStatusType;
 
-  @Column({name: 'estimated_time', unsigned: true, nullable: false})
-  estimatedTime: number;
-
   @Column({length: 5000, nullable: true})
   description: string;
 
@@ -53,28 +59,32 @@ export class Task {
   @Column('datetime', {name: 'time_end', nullable: true})
   timeEnd: Date;
 
-  @Column('datetime', {name: 'started_at', nullable: true})
-  startedAt: Date;
+  @Column('datetime', {nullable: true})
+  started: Date;
 
-  @Column('datetime', {name: 'executed_at', nullable: true})
-  executedAt: Date;
+  @Column('datetime', {nullable: true})
+  executed: Date;
 
-  @Column('datetime', {name: 'updated_at', nullable: true})
-  updatedAt: string;
+  @CreateDateColumn()
+  created: string;
 
-  @Column('datetime', {name: 'created_at', nullable: false})
-  createdAt: string;
+  @UpdateDateColumn()
+  updated: string;
 
   @ManyToOne(() => Project, project => project.tasks, {nullable: false})
+  @JoinColumn({ name: 'project_id' })
   project: Project;
 
   @ManyToOne(() => User, user => user.taskExecutor, {nullable: false})
+  @JoinColumn({ name: 'executor_id' })
   executor: User;
 
   @ManyToOne(() => User, user => user.taskChecker, {nullable: false})
+  @JoinColumn({ name: 'checker_id' })
   checker: User;
 
   @ManyToOne(() => User, user => user.taskAuthor, {nullable: false})
+  @JoinColumn({ name: 'author_id' })
   author: User;
 
   @OneToMany(() => TaskComment, taskComment => taskComment.task)

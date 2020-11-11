@@ -10,10 +10,10 @@ import {
   ApiListResponse,
 } from '../../shared/helpers/api-response.helper';
 import { CrudService } from '../../core/services/crud.service';
-import { CrudInterface } from '../../core/interfaces/crud.interface';
+import { Crud } from '../../core/interfaces/crud.interface';
 
 @Injectable()
-export class ProjectService extends CrudService<Project> implements CrudInterface<Project> {
+export class ProjectService extends CrudService<Project> implements Crud<Project> {
 
   protected entityAlias = 'project';
 

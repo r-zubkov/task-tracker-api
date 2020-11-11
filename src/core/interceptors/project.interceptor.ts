@@ -24,15 +24,15 @@ export class ProjectInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    const projectUUID = request.params.projectUUID;
+    const projectId = request.params.projectId;
 
-    return from((new ParseUUIDPipe()).transform(projectUUID, { type: 'param' }))
+    return from((new ParseUUIDPipe()).transform(projectId, { type: 'param' }))
       .pipe(
         catchError(() => {
           throw new HttpException("Invalid UUID", HttpStatus.BAD_REQUEST);
         }),
         switchMap(() => {
-          const projectEntity = this.projectService.findEntity(user, projectUUID);
+          const projectEntity = this.projectService.findEntity(user, projectId);
           return from(projectEntity)
             .pipe(
               tap(entity => {

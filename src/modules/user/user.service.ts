@@ -8,12 +8,12 @@ import { LoginUserDto } from './dto/login-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { ApiActionResponse, ApiEntityResponse, ApiListResponse } from '../../shared/helpers/api-response.helper';
 import { CrudService } from '../../core/services/crud.service';
-import { CrudInterface } from '../../core/interfaces/crud.interface';
+import { Crud } from '../../core/interfaces/crud.interface';
 
 @Injectable()
-export class UserService extends CrudService<User> implements CrudInterface<User> {
+export class UserService extends CrudService<User> implements Crud<User> {
 
-  protected entityAlias = 'user';
+  protected readonly entityAlias = 'user';
 
   constructor(
     @InjectRepository(User)
