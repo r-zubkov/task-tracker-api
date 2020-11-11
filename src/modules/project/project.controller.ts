@@ -41,10 +41,11 @@ export class ProjectController {
   @Patch(':uuid')
   @Role(UserRole.admin)
   update(
+    @Req() request,
     @Body(new ValidationPipe()) project: CreateUpdateProjectDto,
     @Param('uuid', ParseUUIDPipe) uuid: string
   ) {
-    return this.projectService.update(project, uuid);
+    return this.projectService.update(request.user, project, uuid);
   }
 
   @Post(':uuid/suspend')

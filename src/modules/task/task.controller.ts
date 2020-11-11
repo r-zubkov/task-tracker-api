@@ -12,9 +12,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { CreateUpdateTaskDto } from './dto/create-update-task.dto';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { ProjectInterceptor } from '../../core/interceptors/project.interceptor';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Controller('projects/:projectId/tasks')
 @UseGuards(JwtAuthGuard)
@@ -43,14 +44,14 @@ export class TaskController {
   // }
 
   @Post()
-  create(@Req() request, @Body(new ValidationPipe()) task: CreateUpdateTaskDto) {
+  create(@Req() request, @Body(new ValidationPipe()) task: CreateTaskDto) {
     return this.taskService.create(request.user, request.project, task);
   }
 
   @Patch(':uuid')
   update(
     @Req() request,
-    @Body(new ValidationPipe()) task: CreateUpdateTaskDto,
+    @Body(new ValidationPipe()) task: UpdateTaskDto,
     @Param('uuid', ParseUUIDPipe) uuid: string
   ) {
     return this.taskService.update(request.user, task, uuid);

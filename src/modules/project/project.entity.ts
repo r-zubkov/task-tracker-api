@@ -37,7 +37,7 @@ export class Project {
   @JoinColumn({ name: 'owner_id' })
   owner: User;
 
-  @OneToMany(() => ProjectParticipant, projectParticipant => projectParticipant.user)
+  @OneToMany(() => ProjectParticipant, projectParticipant => projectParticipant.project)
   projectParticipants: ProjectParticipant[];
 
   @OneToMany(() => Task, task => task.project, {nullable: false})

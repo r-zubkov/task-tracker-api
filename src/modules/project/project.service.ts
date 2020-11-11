@@ -35,8 +35,10 @@ export class ProjectService extends CrudService<Project> implements Crud<Project
     if (!user.isAdmin) {
       query
         .leftJoin(`${this.entityAlias}.projectParticipants`, "projectParticipant")
-        .andWhere(`${this.entityAlias}.isActive = :isActive`, { isActive: true })
-        .andWhere(`projectParticipant.userId = :userId`, { userId: user.id });
+        .andWhere(`${this.entityAlias}.isActive = :isActiveProject`, { isActiveProject: true })
+        .andWhere('projectParticipant.isActive = :isActiveParticipant', { isActiveParticipant: true })
+        .andWhere(`projectParticipant.user = :userId`, { userId: user.id });
+
     }
 
     return query
@@ -59,8 +61,8 @@ export class ProjectService extends CrudService<Project> implements Crud<Project
     return this.createEntity({...project, owner: author});
   }
 
-  async update(project: CreateUpdateProjectDto, projectUUID: string): Promise<ApiActionResponse | HttpException> {
-    return this.updateEntity(project, projectUUID);
+  async update(user: User, project: CreateUpdateProjectDto, projectUUID: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateEntity(user, project, projectUUID);
   }
 
   async delete(uuid: string): Promise<ApiActionResponse | HttpException> {

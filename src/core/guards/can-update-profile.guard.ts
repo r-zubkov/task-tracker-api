@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { User } from '../../modules/user/user.entity';
 
 @Injectable()
-export class ProfileUpdateGuard implements CanActivate {
+export class CanUpdateProfileGuard implements CanActivate {
 
   constructor(private userUUID: string = null) {}
 

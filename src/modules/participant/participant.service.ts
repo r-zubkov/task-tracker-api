@@ -60,7 +60,7 @@ export class ParticipantService {
     try {
       for (const participant of participants) {
         const entity = await (this._buildParticipantQuery(project, participant)).getOne();
-        const callbackResult = callback(entity)
+        const callbackResult = callback(entity, participant)
 
         if (callbackResult) {
           await queryRunner.manager.save(callbackResult);
@@ -110,7 +110,7 @@ export class ParticipantService {
       project,
       'deleted',
       'deleting',
-      (entity) => {
+      (entity, participant) => {
         if (!entity || !entity.isActiveParticipant) {
           return null;
         } else {

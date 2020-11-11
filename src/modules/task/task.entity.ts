@@ -79,10 +79,6 @@ export class Task {
   @JoinColumn({ name: 'executor_id' })
   executor: User;
 
-  @ManyToOne(() => User, user => user.taskChecker, {nullable: false})
-  @JoinColumn({ name: 'checker_id' })
-  checker: User;
-
   @ManyToOne(() => User, user => user.taskAuthor, {nullable: false})
   @JoinColumn({ name: 'author_id' })
   author: User;

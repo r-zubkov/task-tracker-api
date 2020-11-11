@@ -1,6 +1,6 @@
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { User } from '../../modules/user/user.entity';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import {
   ApiActionResponse,
   ApiEntityResponse,
@@ -46,12 +46,21 @@ export abstract class CrudService<Entity> {
     }
   }
 
-  async updateEntity(entity: any, entityUUID: string): Promise<ApiActionResponse | HttpException> {
+  async updateEntity(user: User, entity: any, entityUUID: string): Promise<ApiActionResponse | HttpException> {
     try {
+      // check if entity exist, and user has access
+      const isExists = await (this._buildQuery(user, entityUUID)).getOne();
+      if (!isExists) throw new NotFoundException();
+
       const result = await this.repository.update(entityUUID, entity);
       return ApiResponseHelper.successAction('Entity successfully updated', result);
     } catch (err) {
-      throw new HttpException("An error occurred while updating entity", HttpStatus.BAD_REQUEST)
+      switch (err['status']) {
+        case 404:
+          throw new HttpException("Entity not found", HttpStatus.NOT_FOUND)
+        default:
+          throw new HttpException("An error occurred while updating entity", HttpStatus.BAD_REQUEST)
+      }
     }
   }
 

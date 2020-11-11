@@ -1,15 +1,16 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { InsertResult, Repository, UpdateResult, SelectQueryBuilder } from 'typeorm';
+import { InsertResult, Repository, UpdateResult, SelectQueryBuilder, Brackets } from 'typeorm';
 import { Task, TaskStatusType } from './task.entity';
 import { DateHelper } from '../../shared/helpers/date.helper';
-import { CreateUpdateTaskDto } from './dto/create-update-task.dto';
 import { TaskFlowService } from './task-flow.service';
 import { CrudService } from '../../core/services/crud.service';
 import { User } from '../user/user.entity';
 import { Crud } from '../../core/interfaces/crud.interface';
 import { ApiActionResponse, ApiEntityResponse, ApiListResponse } from '../../shared/helpers/api-response.helper';
 import { Project } from '../project/project.entity';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TaskService extends CrudService<Task> implements Crud<Task>{
@@ -33,16 +34,17 @@ export class TaskService extends CrudService<Task> implements Crud<Task>{
 
     // for non-admin, return only the task, when user is participant (author/executor/checker)
     if (!user.isAdmin) {
-      query
-        .orWhere(`${this.entityAlias}.executor = :executorId`, { executorId: user.id })
-        .orWhere(`${this.entityAlias}.checker = :checkerId`, { checkerId: user.id })
-        .orWhere(`${this.entityAlias}.author = :authorId`, { authorId: user.id });
+      query.andWhere(
+        new Brackets(qb => {
+          qb.where(`${this.entityAlias}.author = :authorId`, { authorId: user.id })
+            .orWhere(`${this.entityAlias}.executor = :executorId`, { executorId: user.id });
+        }));
     }
 
     return query
-      .leftJoinAndSelect(`${this.entityAlias}.executor`, "executor")
-      .leftJoinAndSelect(`${this.entityAlias}.checker`, "checker")
-      .leftJoinAndSelect(`${this.entityAlias}.author`, "author");
+      .leftJoinAndSelect(`${this.entityAlias}.author`, "author")
+      .leftJoinAndSelect(`${this.entityAlias}.executor`, "executor");
+
   }
 
   async getAll(user: User): Promise<ApiListResponse<Task>> {
@@ -53,12 +55,12 @@ export class TaskService extends CrudService<Task> implements Crud<Task>{
     return this.getEntity(user, uuid);
   }
 
-  async create(user: User, project: Project, task: CreateUpdateTaskDto): Promise<ApiActionResponse | HttpException> {
+  async create(user: User, project: Project, task: CreateTaskDto): Promise<ApiActionResponse | HttpException> {
     return this.createEntity({...task, author: user, project: project});
   }
 
-  update(user: User, task: CreateUpdateTaskDto, uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this.updateEntity('', '')
+  async update(user: User, task: UpdateTaskDto, uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateEntity(user, task, uuid)
   }
 
   // TODO

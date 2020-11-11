@@ -17,7 +17,7 @@ import { TaskService } from '../task/task.service';
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard';
 import { Role } from '../../core/decorators/role.decorator';
 import { UserRole } from './user.entity';
-import { ProfileUpdate } from '../../core/decorators/profile-update.decorator';
+import { CanUpdateProfile } from '../../core/decorators/can-update-profile.decorator';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -44,12 +44,13 @@ export class UserController {
   }
 
   @Patch(':userUUID')
-  @ProfileUpdate()
+  @CanUpdateProfile()
   update(
+    @Req() request,
     @Body(new ValidationPipe()) user: UpdateUserDto,
     @Param('userUUID', ParseUUIDPipe) uuid: string
   ) {
-    return this.userService.update(user, uuid);
+    return this.userService.update(request.user, user, uuid);
   }
 
   @Delete(':uuid')

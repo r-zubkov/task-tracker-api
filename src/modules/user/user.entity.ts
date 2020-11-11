@@ -69,9 +69,6 @@ export class User {
   @OneToMany(() => Task, taskExecutor => taskExecutor.author)
   taskExecutor: Task[];
 
-  @OneToMany(() => Task, taskChecker => taskChecker.author)
-  taskChecker: Task[];
-
   @OneToMany(() => TaskComment, commentAuthor => commentAuthor.author)
   commentAuthor: TaskComment[];
 
