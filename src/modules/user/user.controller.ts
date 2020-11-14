@@ -55,13 +55,13 @@ export class UserController {
 
   @Delete(':uuid')
   @Role(UserRole.admin)
-  block(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.userService.delete(uuid);
+  block(@Req() request, @Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.userService.delete(request.user, uuid);
   }
 
   @Post(':uuid/activate')
   @Role(UserRole.admin)
-  unblock(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.userService.restore(uuid);
+  unblock(@Req() request, @Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.userService.restore(request.user, uuid);
   }
 }

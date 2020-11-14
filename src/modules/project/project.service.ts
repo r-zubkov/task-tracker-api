@@ -65,11 +65,11 @@ export class ProjectService extends CrudService<Project> implements Crud<Project
     return this.updateEntity(user, project, projectUUID);
   }
 
-  async delete(uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this.updateStatus(uuid, false, 'Project', 'suspended', 'suspending');
+  async delete(user: User, uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateStatus(user, uuid, false);
   }
 
-  async restore(uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this.updateStatus(uuid, true, 'Project',  'activated', 'activating');
+  async restore(user: User, uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateStatus(user, uuid, true);
   }
 }

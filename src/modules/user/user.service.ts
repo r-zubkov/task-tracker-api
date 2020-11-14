@@ -59,12 +59,12 @@ export class UserService extends CrudService<User> implements Crud<User> {
     return this.updateEntity(user, userDto, userUUID);
   }
 
-  async delete(uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this.updateStatus(uuid, false, 'User', 'blocked', 'blocking')
+  async delete(user: User, uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateStatus(user, uuid, false)
   }
 
-  async restore(uuid: string): Promise<ApiActionResponse | HttpException> {
-    return this.updateStatus(uuid, true, 'User', 'activated', 'activating')
+  async restore(user: User, uuid: string): Promise<ApiActionResponse | HttpException> {
+    return this.updateStatus(user, uuid, true)
   }
 
   async findUsersByIds(uuids: string[]): Promise<User[]> {

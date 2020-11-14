@@ -18,11 +18,11 @@ export abstract class CrudService<Entity> {
 
   protected abstract _buildQuery(user: User, uuid?: string): SelectQueryBuilder<Entity>;
 
-  async getEntity(user: User, uuid: string, notFoundMsg?: string): Promise<ApiEntityResponse<Entity> | HttpException> {
+  async getEntity(user: User, uuid: string): Promise<ApiEntityResponse<Entity> | HttpException> {
     const entity = await (this._buildQuery(user, uuid)).getOne();
 
     if (!entity) {
-      throw new HttpException(notFoundMsg || 'Entity not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('Entity not found', HttpStatus.NOT_FOUND)
     }
 
     return ApiResponseHelper.entity(entity);
@@ -46,13 +46,13 @@ export abstract class CrudService<Entity> {
     }
   }
 
-  async updateEntity(user: User, entity: any, entityUUID: string): Promise<ApiActionResponse | HttpException> {
+  async updateEntity(user: User, entityDto: any, uuid: string): Promise<ApiActionResponse | HttpException> {
     try {
       // check if entity exist, and user has access
-      const isExists = await (this._buildQuery(user, entityUUID)).getOne();
-      if (!isExists) throw new NotFoundException();
+      const entity = await (this._buildQuery(user, uuid)).getOne();
+      if (!entity) return new NotFoundException();
 
-      const result = await this.repository.update(entityUUID, entity);
+      const result = await this.repository.update(uuid, entityDto);
       return ApiResponseHelper.successAction('Entity successfully updated', result);
     } catch (err) {
       switch (err['status']) {
@@ -64,29 +64,19 @@ export abstract class CrudService<Entity> {
     }
   }
 
-  protected async updateStatus(
-    uuid: string,
-    newStatus: boolean,
-    entityName: string,
-    completedText: string,
-    progressingText: string,
-  ): Promise<ApiActionResponse | HttpException> {
-    const entity = await this.repository.findOne({
-      where: {
-        id: uuid,
-        isActive: !newStatus
-      }});
-
+  protected async updateStatus(user: User, uuid: string, newStatus: boolean): Promise<ApiActionResponse | HttpException> {
+    // check if entity exist, and user has access
+    const entity = await (this._buildQuery(user, uuid)).getOne();
     if (!entity) {
-      throw new HttpException("Invalid request", HttpStatus.BAD_REQUEST)
+      throw new HttpException("Entity not found", HttpStatus.NOT_FOUND)
     }
 
     try {
       entity['isActive'] = newStatus;
       const result = await this.repository.update(uuid, entity);
-      return ApiResponseHelper.successAction(`${entityName} successfully ${completedText}`, result);
+      return ApiResponseHelper.successAction('Entity status successfully updated', result);
     } catch (err) {
-      throw new HttpException(`An error occurred while ${progressingText} ${entityName.toLowerCase()}`, HttpStatus.BAD_REQUEST)
+      throw new HttpException('An error occurred while updating entity status', HttpStatus.BAD_REQUEST)
     }
   }
 }

@@ -80,11 +80,7 @@ export class ParticipantService {
     projectParticipants: ProjectParticipantsDto,
     project: Project
   ): Promise< ApiActionResponse | HttpException> {
-    return this._updateParticipants(
-      projectParticipants,
-      project,
-      'added',
-      'adding',
+    return this._updateParticipants(projectParticipants, project, 'added', 'adding',
       (entity, participant) => {
       if (entity) {
         if (entity.isActiveParticipant) {
@@ -105,11 +101,7 @@ export class ParticipantService {
     projectParticipants: ProjectParticipantsDto,
     project: Project
   ): Promise< ApiActionResponse | HttpException> {
-    return this._updateParticipants(
-      projectParticipants,
-      project,
-      'deleted',
-      'deleting',
+    return this._updateParticipants(projectParticipants, project, 'deleted', 'deleting',
       (entity, participant) => {
         if (!entity || !entity.isActiveParticipant) {
           return null;

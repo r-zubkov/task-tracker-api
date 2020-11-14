@@ -34,7 +34,7 @@ export class ProjectController {
 
   @Post()
   @Role(UserRole.admin)
-  create(@Body(new ValidationPipe()) project: CreateUpdateProjectDto, @Req() request) {
+  create(@Req() request, @Body(new ValidationPipe()) project: CreateUpdateProjectDto) {
     return this.projectService.create(project, request.user);
   }
 
@@ -50,13 +50,13 @@ export class ProjectController {
 
   @Post(':uuid/suspend')
   @Role(UserRole.admin)
-  suspend(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.projectService.delete(uuid);
+  suspend(@Req() request, @Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.delete(request.user, uuid);
   }
 
   @Post(':uuid/activate')
   @Role(UserRole.admin)
-  activate(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return this.projectService.restore(uuid);
+  activate(@Req() request, @Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.projectService.restore(request.user, uuid);
   }
 }
