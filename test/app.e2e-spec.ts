@@ -1,24 +1,50 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { Connection } from 'typeorm';
+import { AppModule } from '../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('AppModule (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
-
+    })
+      .overrideProvider(Connection)
+      .useValue({
+        options: { type: 'mysql' },
+        subscribers: [],
+        getRepository: () => ({}),
+        close: async () => {},
+      })
+      .overrideProvider(ConfigService)
+      .useValue(
+        new ConfigService({
+          AUTH_SECRETKEY: 'test-secret',
+          AUTH_EXPIRESIN: '60',
+        }),
+      )
+      .compile();
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  afterAll(async () => {
+    await app?.close();
+  });
+
+  it('rejects an invalid email in POST /auth/sign-in', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .post('/auth/sign-in')
+      .send({ email: 'invalid', password: '123456' })
+      .expect(400);
+  });
+
+  it('requires authentication for GET /users', () => {
+    return request(app.getHttpServer())
+      .get('/users')
+      .expect(401);
   });
 });

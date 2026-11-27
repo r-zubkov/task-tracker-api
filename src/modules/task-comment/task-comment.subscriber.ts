@@ -1,4 +1,4 @@
-import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent } from 'typeorm/index';
+import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
 import { DateHelper } from '../../shared/helpers/date.helper';
 import { TaskComment } from './task-comment.entity';
 
@@ -16,7 +16,9 @@ export class TaskCommentSubscriber implements EntitySubscriberInterface<TaskComm
     event.entity.createdAt = DateHelper.formatToDbDateTime(new Date());
   }
 
-  beforeUpdate(event: InsertEvent<TaskComment>) {
-    event.entity.updatedAt = DateHelper.formatToDbDateTime(new Date());
+  beforeUpdate(event: UpdateEvent<TaskComment>) {
+    if (event.entity) {
+      event.entity.updatedAt = DateHelper.formatToDbDateTime(new Date());
+    }
   }
 }

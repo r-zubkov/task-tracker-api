@@ -1,4 +1,4 @@
-import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent } from 'typeorm/index';
+import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
 import { DateHelper } from '../../shared/helpers/date.helper';
 import { TaskTime } from './task-time.entity';
 
@@ -16,7 +16,9 @@ export class TaskTimeSubscriber implements EntitySubscriberInterface<TaskTime> {
     event.entity.createdAt = DateHelper.formatToDbDateTime(new Date());
   }
 
-  beforeUpdate(event: InsertEvent<TaskTime>) {
-    event.entity.updatedAt = DateHelper.formatToDbDateTime(new Date());
+  beforeUpdate(event: UpdateEvent<TaskTime>) {
+    if (event.entity) {
+      event.entity.updatedAt = DateHelper.formatToDbDateTime(new Date());
+    }
   }
 }
