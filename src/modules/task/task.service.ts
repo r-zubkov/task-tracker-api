@@ -63,7 +63,7 @@ export class TaskService {
   }
 
   async updateStatus(status: UpdateTaskStatusDto, taskUuid: string): Promise<UpdateResult | boolean> {
-    const task = await this.taskRepository.findOne(taskUuid);
+    const task = await this.taskRepository.findOneBy({ id: taskUuid });
     const newStatus = status.newStatus;
 
     if(task && this.taskFlowService.isAvailableNextStatus(task.status, newStatus)) {

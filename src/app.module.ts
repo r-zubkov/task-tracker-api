@@ -25,6 +25,7 @@ import { ProjectParticipant } from './modules/participant/project-participant.en
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
+        connectorPackage: 'mysql2',
         host: configService.get('DATABASE_HOST'),
         port: configService.get<number>('DATABASE_PORT'),
         username: configService.get('DATABASE_USER'),

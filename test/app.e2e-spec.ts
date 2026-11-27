@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { Connection } from 'typeorm';
+import { getDataSourceToken } from '@nestjs/typeorm';
 import { AppModule } from '../src/app.module';
 
 describe('AppModule (e2e)', () => {
@@ -12,12 +12,12 @@ describe('AppModule (e2e)', () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideProvider(Connection)
+      .overrideProvider(getDataSourceToken())
       .useValue({
         options: { type: 'mysql' },
+        entityMetadatas: [],
         subscribers: [],
         getRepository: () => ({}),
-        close: async () => {},
       })
       .overrideProvider(ConfigService)
       .useValue(

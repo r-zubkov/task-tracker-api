@@ -3,7 +3,7 @@ import { ProjectParticipantsDto } from './dto/project-participants.dto';
 import { ApiActionResponse, ApiListResponse, ApiResponseHelper } from '../../shared/helpers/api-response.helper';
 import { Project } from '../project/project.entity';
 import { UserService } from '../user/user.service';
-import { Connection, Repository, SelectQueryBuilder } from 'typeorm';
+import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectParticipant } from './project-participant.entity';
 import { User } from '../user/user.entity';
@@ -15,7 +15,7 @@ export class ParticipantService {
     @InjectRepository(ProjectParticipant)
     private participantRepository: Repository<ProjectParticipant>,
     private userService: UserService,
-    private connection: Connection,
+    private dataSource: DataSource,
   ) {}
 
   async getAll(project: Project): Promise<ApiListResponse<Project>> {
@@ -53,7 +53,7 @@ export class ParticipantService {
       throw new HttpException("Invalid request", HttpStatus.BAD_REQUEST);
     }
 
-    const queryRunner = this.connection.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 

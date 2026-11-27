@@ -1,11 +1,11 @@
-import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
+import { DataSource, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
 import { DateHelper } from '../../shared/helpers/date.helper';
 import { TaskComment } from './task-comment.entity';
 
 @EventSubscriber()
 export class TaskCommentSubscriber implements EntitySubscriberInterface<TaskComment> {
-  constructor(connection: Connection) {
-    connection.subscribers.push(this);
+  constructor(dataSource: DataSource) {
+    dataSource.subscribers.push(this);
   }
 
   listenTo() {

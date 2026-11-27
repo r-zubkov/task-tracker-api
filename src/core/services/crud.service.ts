@@ -62,11 +62,10 @@ export abstract class CrudService<Entity> {
     completedText: string,
     progressingText: string,
   ): Promise<ApiActionResponse | HttpException> {
-    const entity = await this.repository.findOne({
-      where: {
-        id: uuid,
-        isActive: !newStatus
-      }});
+    const entity = await this.repository.createQueryBuilder(this.entityAlias)
+      .where(`${this.entityAlias}.id = :uuid`, { uuid })
+      .andWhere(`${this.entityAlias}.isActive = :isActive`, { isActive: !newStatus })
+      .getOne();
 
     if (!entity) {
       throw new HttpException("Invalid request", HttpStatus.BAD_REQUEST)

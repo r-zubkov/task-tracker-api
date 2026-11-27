@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { In, Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -68,8 +68,8 @@ export class UserService extends CrudService<User> implements CrudInterface<User
   }
 
   async findUsersByIds(uuids: string[]): Promise<User[]> {
-    return await this.repository.findByIds(uuids, {
-      where: { isActive: true },
+    return await this.repository.find({
+      where: { id: In(uuids), isActive: true },
       relations: ['projectParticipants']
     });
   }
